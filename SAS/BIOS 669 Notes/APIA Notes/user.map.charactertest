@@ -1,0 +1,46 @@
+{
+  "DATASETS": [
+    {
+      "DSNAME": "characters",
+      "TABLEPATH": "/root",
+      "VARIABLES": [
+        {
+          "NAME": "url",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/url",
+          "CURRENT_LENGTH": 51
+        },
+        {
+          "NAME": "name",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/name",
+          "CURRENT_LENGTH": 6
+        },
+        {
+          "NAME": "gender",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/gender",
+          "CURRENT_LENGTH": 6
+        },
+        {
+          "NAME": "culture",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/culture",
+          "CURRENT_LENGTH": 8
+        },
+        {
+          "NAME": "playedBy1",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/playedBy/playedBy1",
+          "CURRENT_LENGTH": 14
+        },
+        {
+          "NAME": "aliases1",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/aliases/aliases1",
+          "CURRENT_LENGTH": 24
+        }
+      ]
+    }
+  ]
+}

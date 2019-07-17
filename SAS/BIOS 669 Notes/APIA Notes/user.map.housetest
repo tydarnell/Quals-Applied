@@ -1,0 +1,42 @@
+{
+  "DATASETS": [
+    {
+      "DSNAME": "houses",
+      "TABLEPATH": "/root",
+      "VARIABLES": [
+        {
+          "NAME": "url",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/url"
+        },
+        {
+          "NAME": "name",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/name",
+          "CURRENT_LENGTH": 60
+        },
+        {
+          "NAME": "region",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/region"
+        },
+        {
+          "NAME": "words",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/words",
+          "CURRENT_LENGTH": 100
+        },
+        {
+          "NAME": "currentLord",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/currentLord"
+        },
+        {
+          "NAME": "founder",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/founder"
+        }
+      ]
+    }
+  ]
+}

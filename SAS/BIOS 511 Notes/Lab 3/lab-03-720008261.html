@@ -1,0 +1,2065 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="Generator" content="SAS Software Version 9.4, see www.sas.com">
+<meta http-equiv="Content-type" content="text/html; charset=windows-1252">
+<title>SAS Output</title>
+<style type="text/css">
+<!--
+.aftercaption
+{
+  background-color: #FFFFFF;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+  padding-top: 4pt;
+}
+.batch
+{
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
+  border-collapse: separate;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: 'SAS Monospace', 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  padding: 7px;
+}
+.beforecaption
+{
+  background-color: #FFFFFF;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.body
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.bodydate
+{
+  background-color: #FFFFFF;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  text-align: right;
+  vertical-align: top;
+  width: 100%;
+}
+.bycontentfolder
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.byline
+{
+  background-color: #D3D3D3;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.bylinecontainer
+{
+  background-color: #FFFFFF;
+  border: 0px solid #000000;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.caption
+{
+  background-color: #FFFFFF;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.cell
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.container
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.contentfolder
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.contentitem
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.contentproclabel
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+}
+.contentprocname
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+}
+.contents
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.contentsdate
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.contenttitle
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.continued
+{
+  background-color: #FFFFFF;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+  width: 100%;
+}
+.data
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.dataemphasis
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.dataemphasisfixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.dataempty
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.datafixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.datastrong
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.datastrongfixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.date
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.document
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+a:link {
+color:#0066AA
+}
+a:visited {
+color:#004488
+}
+a:active {
+color:#004488
+}
+.errorbanner
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.errorcontent
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.errorcontentfixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.extendedpage
+{
+  background-color: #FFFFFF;
+  border: 1pt solid #000000;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+  text-align: center;
+}
+.fatalbanner
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.fatalcontent
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.fatalcontentfixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.folderaction
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.footer
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.footeremphasis
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.footeremphasisfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.footerempty
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.footerfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.footerstrong
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.footerstrongfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.frame
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.graph
+{
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
+  border-collapse: separate;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.header
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headeremphasis
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.headeremphasisfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.headerempty
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headerfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.headersandfooters
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headerstrong
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headerstrongfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.heading1
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.heading2
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.heading3
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.heading4
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.heading5
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.heading6
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.index
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.indexaction
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.indexitem
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.indexprocname
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+}
+.indextitle
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.layoutcontainer
+{
+  border: 0px solid #000000;
+  border-spacing: 30px;
+}
+.layoutregion
+{
+  border: 0px solid #000000;
+  border-spacing: 30px;
+}
+.linecontent
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.list
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: disc;
+}
+.list10
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list2
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: circle;
+}
+.list3
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list4
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list5
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list6
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list7
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list8
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list9
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: disc;
+}
+.listitem10
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem2
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: circle;
+}
+.listitem3
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem4
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem5
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem6
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem7
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem8
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem9
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.note
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.notebanner
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.notecontent
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.notecontentfixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.output
+{
+  background-color: #B0B0B0;
+  border: 1px solid #000000;
+  border-collapse: separate;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.pageno
+{
+  background-color: #FFFFFF;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+  text-align: right;
+  vertical-align: top;
+}
+.pages
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.pagesdate
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.pagesitem
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.pagesproclabel
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+}
+.pagesprocname
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+}
+.pagestitle
+{
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.paragraph
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.parskip
+{
+  border: 0px solid #000000;
+  border-spacing: 0px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.prepage
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  text-align: left;
+}
+.proctitle
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: small;
+  font-style: italic;
+  font-weight: bold;
+}
+.proctitlefixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooter
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooteremphasis
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowfooteremphasisfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowfooterempty
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooterfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.rowfooterstrong
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooterstrongfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheader
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheaderemphasis
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowheaderemphasisfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowheaderempty
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheaderfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.rowheaderstrong
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheaderstrongfixed
+{
+  background-color: #D3D3D3;
+  color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemfooter
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter10
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter2
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter3
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter4
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter5
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter6
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter7
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter8
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemfooter9
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle10
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle2
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle3
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle4
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle5
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle6
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle7
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle8
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systemtitle9
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: italic;
+  font-weight: bold;
+}
+.systitleandfootercontainer
+{
+  background-color: #FFFFFF;
+  border: 0px solid #000000;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.table
+{
+  background-color: #B0B0B0;
+  border: 1px solid #000000;
+  border-collapse: separate;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.top_stacked_value
+{
+  padding-bottom: 1px;
+  border: 0;
+}
+.middle_stacked_value
+{
+  padding-top: 1px;
+  padding-bottom: 1px;
+  border: 0;
+}
+.bottom_stacked_value
+{
+  padding-top: 1px;
+  border: 0;
+}
+.titleandnotecontainer
+{
+  background-color: #FFFFFF;
+  border: 0px solid #000000;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.titlesandfooters
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: small;
+  font-style: italic;
+  font-weight: bold;
+}
+.usertext
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.warnbanner
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.warncontent
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.warncontentfixed
+{
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Courier New', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.l {text-align: left }
+.c {text-align: center }
+.r {text-align: right }
+.d {text-align: right }
+.j {text-align: justify }
+.t {vertical-align: top }
+.m {vertical-align: middle }
+.b {vertical-align: bottom }
+TD, TH {vertical-align: top }
+.stacked_cell{padding: 0 }
+-->
+</style>
+<script language="javascript" type="text/javascript">
+<!-- 
+function startup(){
+
+}
+function shutdown(){
+
+}
+
+//-->
+</script>
+
+</head>
+<body onload="startup()" onunload="shutdown()" class="body">
+
+<script language="javascript" type="text/javascript">
+<!-- 
+var _info = navigator.userAgent
+var _ie = (_info.indexOf("MSIE") > 0
+          && _info.indexOf("Win") > 0
+          && _info.indexOf("Windows 3.1") < 0);
+var _ie64 = _info.indexOf("x64") > 0
+
+//-->
+</script>
+
+<div class="branch">
+<a name="IDX"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Task 1/Step 4: Two-Way Frequency Analysis of Treatment Group by Age Category</td>
+</tr>
+</table><br>
+<div>
+<div align="center">
+<table  summary="Page Layout"><tr>
+<td class="c t"><div align="center">
+<table class="table" cellspacing="1" cellpadding="7" rules="groups" frame="box" border="1" bordercolor="#000000" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+</colgroup>
+<tbody>
+<tr>
+<th class="l t stacked_cell header" scope="col"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<th class="l t header top_stacked_value" scope="col">Frequency</th>
+</tr>
+<tr>
+<th class="l t header bottom_stacked_value" scope="col">Col Pct</th>
+</tr>
+</table></th>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td><div align="center">
+<table class="table" cellspacing="1" cellpadding="7" rules="groups" frame="box" border="1" bordercolor="#000000" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Table&nbsp;of&nbsp;AGECAT&nbsp;by&nbsp;ARMCD</th>
+</tr>
+<tr>
+<th class="c b header" rowspan="2" scope="col">AGECAT(Age<br/>Category)</th>
+<th class="c b header" colspan="3" scope="colgroup">ARMCD(Treatment Group)</th>
+</tr>
+<tr>
+<th class="r header" scope="col">Intervention</th>
+<th class="r header" scope="col">Placebo</th>
+<th class="r header" scope="col">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l t rowheader" scope="row">&lt;65  </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">135</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">48.39</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">173</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">54.23</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">308</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">&gt;=65 </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">144</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">51.61</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">146</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">45.77</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">290</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">Total</th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">279</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">319</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="7" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">598</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Frequency&nbsp;Missing&nbsp;=&nbsp;4</th>
+</tr>
+</tbody>
+</table>
+</div>
+</tr>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX1"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="1" cellpadding="7" rules="groups" frame="box" border="1" bordercolor="#000000" summary="Procedure Freq: Chi-Square Tests">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l b header" scope="col">Statistic</th>
+<th class="r b header" scope="col">DF</th>
+<th class="r b header" scope="col">Value</th>
+<th class="r b header" scope="col">Prob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Chi-Square</th>
+<td class="r data">1</td>
+<td class="r data">2.0356</td>
+<td class="r data">0.1537</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Likelihood Ratio Chi-Square</th>
+<td class="r data">1</td>
+<td class="r data">2.0365</td>
+<td class="r data">0.1536</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Continuity Adj. Chi-Square</th>
+<td class="r data">1</td>
+<td class="r data">1.8083</td>
+<td class="r data">0.1787</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Mantel-Haenszel Chi-Square</th>
+<td class="r data">1</td>
+<td class="r data">2.0322</td>
+<td class="r data">0.1540</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Phi Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data" nowrap>-0.0583</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Contingency Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.0582</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Cramer&#39;s V</th>
+<td class="r data">&nbsp;</td>
+<td class="r data" nowrap>-0.0583</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+</div>
+<div class="branch">
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX2"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Task 2/Step 4: Listing of ECHO Trial Investigators</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Country= USA</td>
+</tr>
+</table><br>
+<div>
+<div align="center">
+<table class="table" cellspacing="1" cellpadding="7" rules="groups" frame="box" border="1" bordercolor="#000000" summary="Procedure Print: Data Set WORK.INVESTIGATORS2">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l header" scope="col">Study Site<br/>Identifier</th>
+<th class="l header" scope="col">Investigator<br/>Last Name</th>
+<th class="l header" scope="col">Investigator<br/>First Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="l data">011</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+</tr>
+<tr>
+<td class="l data">012</td>
+<td class="l data">Everdeen</td>
+<td class="l data">Harry</td>
+</tr>
+<tr>
+<td class="l data">013</td>
+<td class="l data">Olympus</td>
+<td class="l data">Harry</td>
+</tr>
+<tr>
+<td class="l data">014</td>
+<td class="l data">Everdeen</td>
+<td class="l data">Harry</td>
+</tr>
+<tr>
+<td class="l data">015</td>
+<td class="l data">Gordon</td>
+<td class="l data">Trent</td>
+</tr>
+<tr>
+<td class="l data">016</td>
+<td class="l data">Gordon</td>
+<td class="l data">Trent</td>
+</tr>
+<tr>
+<td class="l data">017</td>
+<td class="l data">Olympus</td>
+<td class="l data">Bob</td>
+</tr>
+<tr>
+<td class="l data">018</td>
+<td class="l data">Gillings</td>
+<td class="l data">Harry</td>
+</tr>
+<tr>
+<td class="l data">019</td>
+<td class="l data">James</td>
+<td class="l data">Catniss</td>
+</tr>
+<tr>
+<td class="l data">020</td>
+<td class="l data">Gordon</td>
+<td class="l data">Zeus</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX3"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Task 2/Step 4: Listing of ECHO Trial Investigators</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Country= Mexico</td>
+</tr>
+</table><br>
+<div>
+<div align="center">
+<table class="table" cellspacing="1" cellpadding="7" rules="groups" frame="box" border="1" bordercolor="#000000" summary="Procedure Print: Data Set WORK.INVESTIGATORS2">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l header" scope="col">Study Site<br/>Identifier</th>
+<th class="l header" scope="col">Investigator Last<br/>Name</th>
+<th class="l header" scope="col">Investigator<br/>First Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="l data">021</td>
+<td class="l data">Gordon</td>
+<td class="l data">Alice</td>
+</tr>
+<tr>
+<td class="l data">022</td>
+<td class="l data">Gordon</td>
+<td class="l data">Fred</td>
+</tr>
+<tr>
+<td class="l data">023</td>
+<td class="l data">Olympus</td>
+<td class="l data">Catniss</td>
+</tr>
+<tr>
+<td class="l data">024</td>
+<td class="l data">Olympus</td>
+<td class="l data">Darth</td>
+</tr>
+<tr>
+<td class="l data">025</td>
+<td class="l data">Potter</td>
+<td class="l data">Jane</td>
+</tr>
+<tr>
+<td class="l data">026</td>
+<td class="l data">Gordon</td>
+<td class="l data">Fred</td>
+</tr>
+<tr>
+<td class="l data">027</td>
+<td class="l data">Olympus</td>
+<td class="l data">Darth</td>
+</tr>
+<tr>
+<td class="l data">028</td>
+<td class="l data">Vader</td>
+<td class="l data">Harry</td>
+</tr>
+<tr>
+<td class="l data">029</td>
+<td class="l data">Skywalker</td>
+<td class="l data">Catniss</td>
+</tr>
+<tr>
+<td class="l data">030</td>
+<td class="l data">Stevens</td>
+<td class="l data">Trent</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX4"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Task 2/Step 4: Listing of ECHO Trial Investigators</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Country= Canada</td>
+</tr>
+</table><br>
+<div>
+<div align="center">
+<table class="table" cellspacing="1" cellpadding="7" rules="groups" frame="box" border="1" bordercolor="#000000" summary="Procedure Print: Data Set WORK.INVESTIGATORS2">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l header" scope="col">Study Site<br/>Identifier</th>
+<th class="l header" scope="col">Investigator Last<br/>Name</th>
+<th class="l header" scope="col">Investigator<br/>First Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="l data">031</td>
+<td class="l data">Stevens</td>
+<td class="l data">Luke</td>
+</tr>
+<tr>
+<td class="l data">032</td>
+<td class="l data">Davis</td>
+<td class="l data">Zeus</td>
+</tr>
+<tr>
+<td class="l data">033</td>
+<td class="l data">Olympus</td>
+<td class="l data">Catniss</td>
+</tr>
+<tr>
+<td class="l data">034</td>
+<td class="l data">Skywalker</td>
+<td class="l data">Catniss</td>
+</tr>
+<tr>
+<td class="l data">035</td>
+<td class="l data">Everdeen</td>
+<td class="l data">Trent</td>
+</tr>
+<tr>
+<td class="l data">036</td>
+<td class="l data">Potter</td>
+<td class="l data">Catniss</td>
+</tr>
+<tr>
+<td class="l data">037</td>
+<td class="l data">Potter</td>
+<td class="l data">Alice</td>
+</tr>
+<tr>
+<td class="l data">038</td>
+<td class="l data">Gillings</td>
+<td class="l data">Fred</td>
+</tr>
+<tr>
+<td class="l data">039</td>
+<td class="l data">James</td>
+<td class="l data">Bob</td>
+</tr>
+<tr>
+<td class="l data">040</td>
+<td class="l data">Gillings</td>
+<td class="l data">Darth</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+</div>
+<div class="branch">
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX5"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Task 3/Step 2: Print Out of Derived Variables for Site 011</td>
+</tr>
+</table><br>
+<div>
+<div align="center">
+<table class="table" cellspacing="1" cellpadding="7" rules="groups" frame="box" border="1" bordercolor="#000000" summary="Procedure Print: Data Set WORK.DM_TASK3">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l header" scope="col">INVNAM</th>
+<th class="l header" scope="col">LASTNAME</th>
+<th class="l header" scope="col">FIRSTNAME</th>
+<th class="l header" scope="col">RFICDTC</th>
+<th class="l header" scope="col">ICYEAR</th>
+<th class="l header" scope="col">ICMONTH</th>
+<th class="l header" scope="col">ICDAY</th>
+<th class="l header" scope="col">RFICDTC3</th>
+<th class="l header" scope="col">RFICDTC4</th>
+<th class="l header" scope="col">RFICDTC5</th>
+<th class="l header" scope="col">RACE</th>
+<th class="l header" scope="col">RACECAT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2015-03-21</td>
+<td class="l data">2015</td>
+<td class="l data">03</td>
+<td class="l data">21</td>
+<td class="l data">2015-03-21</td>
+<td class="l data">2015-03-21</td>
+<td class="l data">2015-03-21</td>
+<td class="l data">WHITE</td>
+<td class="l data">White</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2015-07-29</td>
+<td class="l data">2015</td>
+<td class="l data">07</td>
+<td class="l data">29</td>
+<td class="l data">2015-07-29</td>
+<td class="l data">2015-07-29</td>
+<td class="l data">2015-07-29</td>
+<td class="l data">WHITE</td>
+<td class="l data">White</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">2016</td>
+<td class="l data">04</td>
+<td class="l data">18</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">OTHER</td>
+<td class="l data">Other</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2016-02-12</td>
+<td class="l data">2016</td>
+<td class="l data">02</td>
+<td class="l data">12</td>
+<td class="l data">2016-02-12</td>
+<td class="l data">2016-02-12</td>
+<td class="l data">2016-02-12</td>
+<td class="l data">WHITE</td>
+<td class="l data">White</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2015-11-24</td>
+<td class="l data">2015</td>
+<td class="l data">11</td>
+<td class="l data">24</td>
+<td class="l data">2015-11-24</td>
+<td class="l data">2015-11-24</td>
+<td class="l data">2015-11-24</td>
+<td class="l data">BLACK OR AFRICAN AMERICAN</td>
+<td class="l data">Black or African American</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2015-10-28</td>
+<td class="l data">2015</td>
+<td class="l data">10</td>
+<td class="l data">28</td>
+<td class="l data">2015-10-28</td>
+<td class="l data">2015-10-28</td>
+<td class="l data">2015-10-28</td>
+<td class="l data">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td class="l data">Other</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2015-06-14</td>
+<td class="l data">2015</td>
+<td class="l data">06</td>
+<td class="l data">14</td>
+<td class="l data">2015-06-14</td>
+<td class="l data">2015-06-14</td>
+<td class="l data">2015-06-14</td>
+<td class="l data">BLACK OR AFRICAN AMERICAN</td>
+<td class="l data">Black or African American</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">2016</td>
+<td class="l data">04</td>
+<td class="l data">18</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">2016-04-18</td>
+<td class="l data">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td class="l data">Other</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2015-01-09</td>
+<td class="l data">2015</td>
+<td class="l data">01</td>
+<td class="l data">09</td>
+<td class="l data">2015-01-09</td>
+<td class="l data">2015-01-09</td>
+<td class="l data">2015-01-09</td>
+<td class="l data">BLACK OR AFRICAN AMERICAN</td>
+<td class="l data">Black or African American</td>
+</tr>
+<tr>
+<td class="l data">POTTER, DARTH</td>
+<td class="l data">Potter</td>
+<td class="l data">Darth</td>
+<td class="l data">2016-04-14</td>
+<td class="l data">2016</td>
+<td class="l data">04</td>
+<td class="l data">14</td>
+<td class="l data">2016-04-14</td>
+<td class="l data">2016-04-14</td>
+<td class="l data">2016-04-14</td>
+<td class="l data">OTHER</td>
+<td class="l data">Other</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+</div>
+</body>
+</html>

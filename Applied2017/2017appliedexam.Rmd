@@ -1,0 +1,132 @@
+---
+title: "Qual 2017"
+author: "Benjana Guraziu"
+date: "7/16/2019"
+output: html_document
+---
+
+1a)
+```{r}
+data <- read.csv("~/Downloads/subtype.txt", sep="")
+
+obj = lm(response ~ factor(clin_sub)-1, data = data[data$treatment == 1,]) #fitting full model
+
+summary(obj)
+```
+1a) ii
+```{r}
+
+##contrast based approach
+
+library(multcomp)
+contrast = matrix(c(1, -1), nrow = 1)
+result = glht(obj, linfct = contrast)
+summary(result)
+
+##get t statistic, if you square it you'll get the F statistic (for the other approach) (df = 1 which is rows of C or difference in number of parameters in full vs reduced model, denominator : n-q - df of SSE)
+##p-value is < 0.05, so reject hypothesis
+
+##only looking at one arm, so only one variable here
+```
+
+1a) iii)
+
+```{r}
+library(car)
+leveneTest(y = data$response[data$treatment == 1])
+```
+
+iv)
+
+```{r}
+contrast = matrix(c(2, -1), nrow = 1)
+result = glht(obj, linfct = contrast)
+summary(result)
+```
+
+v)
+```{r}
+vcov(obj)[1,2] #do not need the whole matrix, just off diagonal
+```
+
+
+2b)
+
+i)
+
+```{r}
+#full
+m1 = lm(response ~ factor(clin_sub)*treatment, data = data)
+summary(m1)
+
+
+#reduced
+m0 = lm(response ~ factor(clin_sub) + treatment, data = data)
+
+#compare the 2
+anova(m1, m0)
+
+#p-value is the same for wald (b_3 = 0) and anova
+
+aggregate(m1$fitted ~ data$treatment + factor(data$clin_sub), FUN = mean)
+
+##implies inconsistency, implies interaction term matters
+
+
+
+### (other example, if you are looking at whether main effects in an interaction model, then you have full model which is interaction, and reduced model which is just the other variable)
+
+```
+
+
+ii)
+
+```{r}
+m1m = lm(response ~ factor(molecular_sub)*treatment, data = data)
+
+#clin
+summary(m1)$r.squared
+
+#molecular
+summary(m1m)$r.squared
+
+##different number of parameters, BIC/AIC better
+BIC(m1)
+
+BIC(m1m) #molecular subtype model better
+
+
+## R^2 will always increase with more parameters. BIC is better way of evaluating
+```
+
+iii)
+
+```{r}
+#can't do direct hypothesis test b/c they're not nested
+
+
+
+```
+
+
+3) - done by hand
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

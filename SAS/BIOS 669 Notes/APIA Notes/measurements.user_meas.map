@@ -1,0 +1,72 @@
+{
+  "DATASETS": [
+    {
+      "DSNAME": "meas",
+      "TABLEPATH": "/root/results",
+      "VARIABLES": [
+        {
+          "NAME": "ordinal_root",
+          "TYPE": "ORDINAL",
+          "PATH": "/root"
+        },
+        {
+          "NAME": "ordinal_results",
+          "TYPE": "ORDINAL",
+          "PATH": "/root/results"
+        },
+        {
+          "NAME": "location",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/results/location",
+          "CURRENT_LENGTH": 29
+        },
+        {
+          "NAME": "parameter",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/results/parameter",
+          "CURRENT_LENGTH": 4
+        },
+        {
+          "NAME": "value",
+          "TYPE": "NUMERIC",
+          "PATH": "/root/results/value"
+        },
+        {
+          "NAME": "unit",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/results/unit",
+          "CURRENT_LENGTH": 7
+        },
+        {
+          "NAME": "country",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/results/country",
+          "CURRENT_LENGTH": 2
+        },
+        {
+          "NAME": "city",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/results/city",
+          "CURRENT_LENGTH": 11
+        },
+        {
+          "NAME": "ordinal_date",
+          "TYPE": "ORDINAL",
+          "PATH": "/root/results/date"
+        },
+        {
+          "NAME": "utc",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/results/date/utc",
+          "CURRENT_LENGTH": 24
+        },
+        {
+          "NAME": "local",
+          "TYPE": "CHARACTER",
+          "PATH": "/root/results/date/local",
+          "CURRENT_LENGTH": 25
+        }
+      ]
+    }
+  ]
+}

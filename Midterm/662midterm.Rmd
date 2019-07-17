@@ -1,0 +1,448 @@
+---
+title: "662Midterm"
+author: "Ty Darnell"
+date: "October 24, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(exact2x2)
+library(stringr)
+library(data.table)
+library(irr)
+library(psych)
+library(epitools)
+library(knitr)
+load("~/Bios662/Midterm/Midterm_BWT.RData")
+knitr::opts_chunk$set(echo = TRUE,message = F, warning = F)
+```
+
+1) I have not recieved any assistance from anyone in completing this exam.
+
+#Problem 2)
+
+##a)
+
+`ga_ultra` is the gestational age in weeks estimated by ultra sound
+
+`ga_est` is the gestational age in weeks estimated at birth
+
+A gestational age of 75 weeks is clearly impossible so I set this value to missing in `ga_ultra`. 
+
+```{r}
+ midt$ga_ultra[midt$ga_ultra==75]=NA
+ggplot(data=midt,aes(sample=ga_ultra))+geom_qq(na.rm = T)+geom_qq_line(na.rm = T)
+```
+
+Based on the qqplot, the `ga_ultra` does not appear approximately normally distributed.
+
+##b)
+
+```{r}
+mean.ultra=mean(midt$ga_ultra,na.rm=T)
+mean.est=mean(midt$ga_est,na.rm=T)
+ga_diff=midt$ga_est-midt$ga_ultra
+diff_mean=mean(ga_diff,na.rm=T)
+```
+
+The mean of `ga_ultra` is `r mean.ultra` and the mean of `ga_est` is `r mean.est`.
+
+The mean of the differences is `r diff_mean`
+
+Although the data does not appear normally distributed, it is n large enough (359 observations). In this scenario a t test is robust against the assumption of normality.
+
+$\mu_{diff}$ = Mean of the differences between the two measures of gestational age.
+
+$\alpha=.05$
+
+$H_0= \mu_{diff}=0$
+
+$H_A= \mu_{diff}\neq 0$
+
+
+```{r}
+(t=t.test(ga_diff,alternative="two.sided"))
+pval=t$p.value
+
+```
+
+Conclusion: Reject $H_0$ since `r pval` < .05
+
+There is evidence that the means of the two gestational age variables differ.
+
+##c)
+
+We will use a Kolmogorov-Smirnoff test in order to detect if there is a difference in the distributions of the two gestational age variables.
+
+$F_1$ = `ga_ultra`
+
+$F_2$ = `ga_est`
+
+$H_0:F_1(y)=F_2(y)$ for all y
+
+$H_A: F_1(y)\neq F_2(y)$ for at least one y
+
+$D=\max_y|F_{1n}(y)-F_{2m}(y)|$
+
+$F_{1n}(y)$= Emperical Distribution Function for the sample from $F_1$
+
+$F_{2m}(y)$= Emperical Distribution Function for the sample from $F_2$
+
+```{r}
+(k=ks.test(midt$ga_ultra,midt$ga_est))
+```
+ 
+Using $\alpha = .05$
+
+D=.186
+
+p-value=`r k$p.value`
+
+since $pvalue<.05$ reject $H_0$
+
+We conclude that the distributions of `ga_ultra` and `ga_est` may be different.
+
+##d)
+
+```{r}
+ga_estint=cut(midt$ga_est,c(0,37,40,Inf),right=F,labels=c("low","med","high"))
+ga_ultraint=cut(midt$ga_ultra,c(0,37,40,Inf),right=F,labels=c("low","med","high"))
+```
+
+Breaking both versions of gestation age into intervals (low,med,high) corresponding to (0,37), [37,40), [40,$\infty$)
+
+```{r}
+(k=cohen.kappa(cbind(ga_estint,ga_ultraint)))
+```
+
+Running a cohen kappa test in order to find the measure of agreement, we get an unweighted kappa estimate of .68 with a 95% CI (.61,.75). Since kappa=0 if agreement is totally by chance and kappa=1 if there is perfect agreement, a kappa of .68 indicates substantial agreement according to the guidlines given Landis and Koch. Thus there is substantial agreement between the two versions.
+
+
+
+##e)
+
+```{r}
+midt$rand_month[midt$rand_month%in%c(0,15)]=NA
+randomized=table(midt$rand_month)
+days=c(31,28,31,30,31,30,31,31,30,31,30,31)
+rmonth=rbind(randomized,days)
+(cs=chisq.test(rmonth))
+```
+
+Since month values of 0 and 15 are invailed, I set those values to NA in `rand_month`. Assuming there are 28 days in February, ie not leap year.
+
+$\pi_1 =$ women randomized each month
+
+$\pi_2 =$ days in each month
+
+$H_0 = \pi_1=\pi_2$
+
+$H_A = \pi_1 \neq \pi_2$
+
+Conclusion: Fail to reject $H_0$ since `r cs$p.value` > .05
+
+There is not enough evidence to suggest that the number of women randomized each month is not consistent with the number of days in each month.
+
+##f)
+
+```{r}
+month2=rbind(table(midt$rand_month),table(midt$birth_month))
+row.names(month2)=c("rand_month","birth_month")
+month2=data.frame(t(month2))
+mon=1:12
+month2=cbind(mon,month2)
+```
+
+```{r}
+f=cbind(mon,month2$rand_month,rep(1,times=12))
+g=cbind(mon,month2$birth_month,rep(2,times=12))
+h=rbind(f,g)
+colnames(h)=c("mon","bothmonths","i")
+h=data.frame(h)
+h$i=factor(h$i)
+ggplot(data=h)+geom_boxplot(aes(y=bothmonths,color=i))
+```
+
+Looking at the boxplots of the two variables, the number of women randomized each month varies considerably more than the number of births per month.
+
+
+##g)
+
+```{r}
+midt$ppnum[midt$ppnum==-9]=NA
+midt$ppnum=factor(midt$ppnum,ordered=T)
+preterm=cut(midt$ga_ultra,c(0,37,Inf),right=F,labels=c(1,0))
+preterm=fct_rev(factor(preterm,ordered = T))
+tab2=table(preterm,midt$ppnum)
+m=apply(matrix(tab2,nrow = 2),2,rev)
+tab3=rbind(m,colSums(m))
+rnames=c("preterm","not preterm","total")
+rownames(tab3)=rnames
+ kable(tab3,caption = "number of previous pregnancies",col.names = c("0","1","2","3+"))
+```
+
+We will need to use a Chi-Square test for trend in order to determine if the risk of preterm delivery varies monotonically (increases or decreases) with the number of of previous pregnancies.
+
+$\rho_1=$ P(preterm birth given 0 previous pregnancies)
+
+$\rho_2=$ P(preterm birth given 1 previous pregnancies)
+
+$\rho_3=$ P(preterm birth given 2 previous pregnancies)
+
+$\rho_4=$ P(preterm birth given 3+ previous pregnancies)
+
+$H_0: \rho_1=\rho_2=\rho_3=\rho_4$
+
+$H_A: \rho_1 \rho_2 \rho_3 \rho_4$ increase or decrease monotonically
+
+$\mathcal{X}^2_{trend}\equiv \dfrac{[n_1x]^2}{[x^2]p(1-p)}$
+
+```{r}
+prop.trend.test(c(10,10,9,5),c(67,128,81,33))
+```
+
+Conclude the risk of preterm delivery does not vary monotonically with the number of previous pregnancies.
+
+##h)
+
+```{r}
+tab4=table(midt$group,preterm)
+prempred=matrix(c(149,23,172,171,16,187),byrow = T,nrow = 2)
+(prempred=rbind(prempred,apply(prempred,2,sum)))
+```
+
+We will use Fisher's exact test in order to determine if treating peridontal disease in pregnant women is effective in reducing the risk of prematurity. We are looking to see if there is a statistically significant difference between the proportion of women who have nonpreterm deliveries between the prenatal peridonal treament group and the control group (postpartum).
+
+$\pi_1$= proportion of women with no preterm delivery in the treament group.
+
+$\pi_2$= proportion of women with no preterm delivery in the control group.
+
+$H_0:$ P(no preterm|treament)=P(no preterm|control)
+
+$H_0: \pi_1=\pi_2$
+
+$H_A:$ P(no preterm|treament)>P(no preterm|control)
+
+$H_A: \pi_1>\pi_2$
+
+```{r}
+fisher.test(matrix(c(149,23,171,16),nrow=2),alternative="greater")
+```
+Conclusion:
+Looking at the results of the Fisher Exact test, we see that the pvalue is .9491>.05 so we fail to reject the null hypothesis. Thus there is no evidence that the periodontal treatment is effective in reducing prematurity.
+
+##i)
+
+```{r}
+pd_diff=midt$pd_post-midt$pd_pre
+```
+
+`pd_diff` is the difference in average pocket depth from randomization to delievery. A negative value indicates a reduction in pocket depth, thus less periodonal disease.
+
+$\mu_{diff}$= mean of the differences of pocket depth
+
+$H_0:$ There is no difference between the means
+
+$H_0: \mu_{diff}=0$
+
+$H_A:$ There is a difference between the means
+
+$H_A: \mu_{diff} \neq 0$
+
+```{r}
+t.test(pd_diff,alternative="two.sided")
+```
+
+Conclusion: since p-value=.002674<.05
+
+Reject $H_0$, conclude there is a difference in the means of pocket depth.
+
+##j)
+
+```{r}
+pd_1=midt%>%filter(group==1)%>%transmute(pdchange1=pd_post-pd_pre)
+pd_2=midt%>%filter(group==2)%>%transmute(pdchange2=pd_post-pd_pre)
+ggplot(data=pd_1,aes(sample=pdchange1))+geom_qq(na.rm = T)+geom_qq_line(na.rm = T)
+ggplot(data=pd_2,aes(sample=pdchange2))+geom_qq(na.rm = T)+geom_qq_line(na.rm = T)
+pd1_m=mean(pd_1$pdchange1,na.rm=T)
+pd2_m=mean(pd_2$pdchange2,na.rm=T)
+```
+
+Looking at the qqplots of the two groups, the data appears approximately normally distributed. In addition we have a large sample size so the data is n large enough. Based on this I have selected a two sample ttest in order to determine if the mean change in pre and post pocket depth differs between the two groups. Not assuming that the variance is equal between the two groups.
+
+$pd_1$ = change in pocket depth for treatment group, negative values indication reduction in pocket depth, thus less periodontal disease. Mean for this group is $\mu_1=$`r pd1_m`
+
+$pd_2$ = change in pocket depth for control group, negative values indication reduction in pocket depth, thus less periodontal disease. Mean for this group is $\mu_2$ = `r pd2_m`
+
+$H_0: \mu_1=\mu_2$ (No change)
+
+$H_A: \mu_1 \neq \mu_2$ (The mean change differs between the two groups)
+
+```{r}
+t.test(pd_1,pd_2,var.equal = F)
+```
+Looking at the p-value, .001257<.05 so reject $H_0$
+
+Conclude there is a difference between the mean change in average pocket depth between the two groups.
+
+##k)
+
+While there was a reduction in pocket depth in the treament group from randomization to delivery, thus a reduction in periodontal disease, it does not seem that this had an effect on birthweight since there was not a statistically significant difference in birth weights between the treatment and control group. One possible explanation is that periodontal disease during pregnancy is not a factor for birthweight.
+
+#Problem 3)
+
+```{r,echo=F}
+nam=c("id","ci_pb","ei_pd","ag")
+cc=fread("Midterm_CC.dat")
+names(cc)=nam
+cc$ci_pb=factor(cc$ci_pb)
+cc$ei_pd=factor(cc$ei_pd)
+cc$ag=factor(cc$ag)
+```
+
+##a)
+
+```{r}
+pdtab1=table(cc$ei_pd,cc$ci_pb)
+pdtab=matrix(c(36,18,54,51,69,120,87,87,174),nrow=3,byrow=T)
+pdtab1=matrix(c(36,18,51,69),nrow=2,byrow=T)
+
+colnames(pdtab)=c("Disease", "No Disease","Col Total")
+rownames(pdtab)=c("Exposed","Unexposed","Row Total")
+kable(pdtab)
+```
+
+In order to determine whether premature birth case status is asccoicated with being exposed to peridontal disease, we will calculate the OR estimand for case control studies. We are assuming that this is an unmatched case-control study.
+
+$\pi_1$ = P(Preterm Pregnancy|Exposed to periodontal disease)
+
+$\pi_2$ = P(Preterm Pregnancy|Not Exposed to periodonal disease)
+
+$\hat{OR} = \dfrac{\pi_{11}/\pi_{12)}}{\pi_{21}/\pi_{22}}=\dfrac{36/18}{51/69}\approx 2.7$
+
+$\hat{OR}$= 2.7 implies the odds of permature birth in the periodonal disease expoure group is 2.7 times that in the unexposed group.
+
+##b)
+
+```{r}
+pd3=array(c(69,51,18,36),dim=c(2,2),dimnames=list(PD=c("Unexposed","Exposed"),PT=c("No","Yes")))
+oddsratio.wald(pd3)
+```
+Running an odds ratio wald test, the OR estimate is 2.705882 which agrees with our results from part a. An 95% CI for the true measure of the odds ratio is (1.382,5.297)
+
+The 95% Confidence Interval 
+
+##c)
+
+```{r,echo=F}
+ag1=cc%>% filter(ag==1)
+ag2=cc%>% filter(ag==2)
+ag3=cc%>% filter(ag==3)
+agcolnam=c("Disease", "No Disease")
+agrownam=c("Exposed","Unexposed")
+agtab1=table(ag1$ei_pd,ag1$ci_pb)
+agtab2=table(ag2$ei_pd,ag2$ci_pb)
+agtab3=table(ag3$ei_pd,ag3$ci_pb)
+colnames(agtab1)=agcolnam
+rownames(agtab1)=agrownam
+colnames(agtab2)=agcolnam
+rownames(agtab2)=agrownam
+colnames(agtab3)=agcolnam
+rownames(agtab3)=agrownam
+kable(agtab1,caption="age group 1")
+kable(agtab2,caption="age group 2")
+kable(agtab3,caption = "age group 3")
+```
+
+```{r}
+ag1a=array(c(25,16,21,30),dim=c(2,2),dimnames=list(PD=c("Unexposed","Exposed"),PT=c("No","Yes")))
+oddsratio.wald(ag1a)
+ag2a=array(c(4,1,14,17),dim=c(2,2),dimnames=list(PD=c("Unexposed","Exposed"),PT=c("No","Yes")))
+oddsratio.wald(ag2a)
+ag3a=array(c(7,1,16,22),dim=c(2,2),dimnames=list(PD=c("Unexposed","Exposed"),PT=c("No","Yes")))
+oddsratio.wald(ag3a)
+```
+
+Running a wald test on each age group we get:
+
+Age group 1:
+
+OR estimate: 2.232
+
+95% CI for true OR measure: (.964,5.168)
+
+Age group 2:
+
+OR estimate: 4.857
+
+95% CI for true OR measure: (.486,48.57)
+
+Age group 3:
+
+OR estimate: 9.625
+
+95% CI for true OR measure: (1.075,86.175)
+
+The pooled estimate of the OR is 3.05. This is taken from the Mantel-Haenzel Test as shown and described in part d.
+
+##d)
+
+In order to determine if age group is a confounder, we will use a Mantel-Haenszel test.
+
+$H_0: \pi_1=\pi_2=\pi_3 \iff H_0: OR=1$
+
+$H_A:$ True common odds ratio is not equal to 1
+
+
+```{r}
+agegr <- array(c(30,16,21,25,17,1,14,4,22,1,16,7),
+dim = c(2, 2, 3),
+dimnames = list(PD = c("Exposure", "No Exposure"),
+Preterm = c("Yes", "No"),
+Age_group = c("1", "2", "3")))
+mantelhaen.test(agegr)
+```
+
+Conclusion: since p-value= .0036<.05 reject $H_0$
+
+Conclude True commons odds ratio is not equal to 1.
+
+The Mantel-Haenszel test gives us a a common odds ratio of 3.05 with a 95% CI: (1.48,6.28). This is still within our 95% CI for the unstratified data. The change of OR from the unstratified 2.7 to the stratified 3.05 is a moderate change. However looking at the the OR estimates of each strata, there are large differences. The odds ratio increases as you go to older age groups. It ranges from 2.232 to 9.625. Thus it is likely that agegroup is a confounder.
+
+The pooled estimate does not seemed to be a reasonable way to summarize the association. In addition to having a widespread of ORs, the 95% confidence intervals two of the age groups OR is very large suggesting a wide range of possible values for the true measure of OR.
+
+##e)
+
+Assuming an individually-matched case-control design, we want to determine whether premature birth is associated with being exposed to periodontal disease. We will use a McNemar test in order to determine whether birthcase status is associated with being exposed to periodontal disease.
+
+$H_0: \pi_1=\pi_2$
+$H_A: \pi_1 \neq \pi_2$
+
+```{r}
+cc1=cc%>% mutate(mp=str_sub(id,3,4))%>%select(ci_pb,ei_pd,mp)
+```
+
+
+```{r}
+mcn=array(c(69,51,18,36),dim=c(2,2),dimnames=list(PD=c("Unexposed","Exposed"),PT=c("No","Yes")))
+mcnemar.exact(mcn)
+```
+OR estimate = .353
+
+95% CI for the true measure of the OR is (.1940528,.6144557)
+
+Conclusion: 
+since p-value=.000117<.05 reject $H_0$
+
+Conclude that premature birth case status is associated with being exposed to periodontal disease.
+
+##f)
+
+The esitmate of the measure of association in part e (the individually matched case control) seems the most appropriate. Since the matching is based on age and this is a potentially confounding variable, this design controls for a potnetially cofounding variable, making the results more reliable.
+
+##g)
+
+In all the test we have run we have found that there is evidence that exposure to periodontal disease does have an effect on preterm delievery. Whether we ignore agegroup or not the test results still point to an association between periodontal disease and preterm delivery. Even looking at the study as a indiviudally matched case control design or not still led to this same conclusion.
+
+
