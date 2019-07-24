@@ -1,0 +1,268 @@
+---
+title: "hw6"
+author: "Ty Darnell"
+date: "November 8, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = F, message = F)
+library(tidyverse)
+library(knitr)
+library(data.table)
+library(MASS)
+library(asbio)
+library(nortest)
+column_names=c("id","group","trg")
+column_classes=c("character","factor","integer")
+trgdat=fread("HW6_TRG.txt",colClasses = column_classes)
+setnames(trgdat,column_names)
+
+```
+
+#Problem 1
+
+Using a pairwise scheffe Anova Test
+
+Assumptions:
+
+Homogeneity of variance
+
+Normality and independence of residual error
+
+Linearity
+
+$\mu_1$ is the mean triglyceride level of the control group (group 1)
+
+$\mu_2$ is the mean of group 2
+
+$\dots$
+
+$\mu_5$ is the mean of group 5
+
+We have ${5\choose 2}$=10 null and alternative hypotheses represented by i and j each taking values of the 5 groups.
+
+Each $H_0$ is testing if the mean trg levels are equal between two groups
+
+Each $H_A$ is that the mean trg levels are not equal between those two groups
+
+$H_0:\mu_i=\mu_j \quad (i\neq j)$
+
+$H_A: \mu_i \neq \mu_j \quad (i\neq j)$
+
+
+```{r}
+pairwise=pairw.anova(trgdat$trg,trgdat$group,conf.level=.95,method="scheffe")
+(critfval=qf(.95,4,41))
+```
+
+Looking at the table of result from the Scheffe test we have:
+
+```{r}
+kable(pairwise[4])
+```
+
+$\alpha=.05$
+
+Conclusion:
+
+Fail to reject $H_0$ for $(\mu_1,\mu_2)$ $(\mu_1,\mu_3)$  $(\mu_2,\mu_3)$ $(\mu_3,\mu_4)$  $(\mu_4,\mu_5)$ based on the p-values provided in the table which are all $>\alpha$
+
+This means that there is not a statistically signifcant difference between the means of trg level for each of these pairwise comparisons
+
+Reject $H_0$ for $(\mu_1,\mu_4)$ $(\mu_2,\mu_4)$  $(\mu_1,\mu_5)$ $(\mu_2,\mu_5)$  $(\mu_3,\mu_5)$
+based on the p-values provided in the table which are all $<\alpha$
+
+This means that there is a difference between the means of the trg levels of these pairwise comparisons.
+
+Conducting a global anova F-Test we have:
+
+```{r}
+av <- aov(trgdat$trg~trgdat$group)
+kable(anova(av))
+```
+
+$H_0: \mu_1=\mu_2=\dots=\mu_5$
+
+$H_A:$ at least one inequality
+
+Critical Value for F-statistic with degrees of freedom 4,41 =2.6
+
+$C_{.05}=\{F>F_{4,41,.95}=2.6\}$
+
+MSR=Mean square regression
+
+MSE = Mean square error
+
+Global F test statistic: $F^*$  = MSR/MSE= 15.02
+
+$F^*>$ critical F value
+
+$15.02>2.6$
+
+Conclusion: Reject $H_0$ since p-value< .05 and test statistic is in the critical region.
+
+Conclude that at least one group has a different triglyceride mean.
+
+```{r}
+qq1 <- qqnorm(av$residuals); qqline(av$residuals)
+cor.test(qq1$x,qq1$y)
+lillie.test(av$residuals)
+shapiro.test(av$residuals)
+```
+
+The residuals appear approximately normally distributed.
+
+conducting a boxcox transformation in order to determine whether a transformation of the data would be appropriate.
+
+```{r}
+bc=boxcox(trgdat$trg~trgdat$group)
+boxcox(trgdat$trg~trgdat$group)
+lambda <- bc$x[which.max(bc$y)]
+```
+
+$\lambda$=`r lambda` 
+
+```{r}
+fit <- aov(log(trgdat$trg)~trgdat$group)
+qq <- qqnorm(fit$residuals,xlab="Fitted Values",ylab="Residuals")
+qqnorm(fit$residuals,xlab="Fitted Values",ylab="Residuals"); qqline(fit$residuals)
+cor.test(qq$x,qq$y)
+lillie.test(fit$residuals)
+shapiro.test(fit$residuals)
+```
+
+Looking at the qqplots of the original and transformed data, there does not appear to be an improvement in normality with the transformed data. Thus a transformation is not appropriate.
+
+# Problem 2
+
+##Part i)
+
+Running an anova F test to determine if there is a difference between the trg mean of the control group and the trg mean of the combined treatment groups.
+
+Assumptions:
+
+Homogeneity of variance
+
+Normality and independence of residual error
+
+Linearity
+
+$\mu_0$ = mean of control groups
+
+$\mu_1$ = mean of combined treatment groups
+
+$H_0: \mu_0=\mu_1$
+
+$H_A: \mu_0 \neq \mu_1$
+
+```{r}
+trgdat2=trgdat%>%mutate(group2=factor(as.integer(group!="1")))
+av2 <- aov(trgdat2$trg~trgdat2$group2)
+kable(anova(av2))
+
+qf(.95,1,44)
+
+```
+
+$\alpha=.05$
+
+p-value = .0003
+
+Critical Value for F-statistic with degrees of freedom 1,44 =4.0617
+
+F test statistic: $F^*$  = MSR/MSE= 15.4457
+
+$F^*>$ critical F value
+
+$15.4457>4.0617$
+
+Conclusion: Reject $H_0$ since p-value< .05 and test statistic is in the critical region.
+
+Conclude that the control group and treatments groups have different a triglyceride mean.
+
+##Part ii)
+
+Running a Pearson correlation test to determine whether there is a linear relationship between group number and trg level.
+
+We will look at the correlation between group and trg level.
+
+Assumptions:
+
+Homogeneity of variance
+
+Normality and independence of residual error
+
+Linearity
+
+$H_0:$ Correlation = 0
+
+$H_A:$ Correlation $\neq$ 0
+
+
+```{r}
+(cortest=cor.test(as.numeric(trgdat$group),trgdat$trg))
+```
+
+p-value = `r cortest$p.value`< .05
+
+Conclusion: Reject $H_0$ since the p-value < $\alpha$. Conclude the true correlation is not equal to 0 thus there is a linear relationship between group and trg level.
+
+A correlation of -.768 represents a negative linear relationship between group and trg level. 
+
+#Problem 3
+
+```{r}
+trgdat$dose=recode(trgdat$group,"1"=0,"2"=75,"3"=150,"4"=300,"5"=600)
+trgdat3=trgdat %>% filter(dose!=0)
+(model=lm(trgdat3$trg~trgdat3$dose))
+control=trgdat%>%filter(dose==0)
+meancontrol=mean(control$trg)
+```
+
+Assumptions:
+
+Linearity: $Y_i = \alpha+\beta X_i +\epsilon_i$
+
+Xs are fixed constants
+
+$\epsilon_i$ are independent and identially distributed $\sim N(0,\sigma^2)$
+
+$\hat{Y_i}$=Predicted triglyceride level
+
+$X_i$=dose (mg of peppermint extract)
+
+$\hat{Y_i}=\hat{\alpha} +\hat{\beta} X_i$
+
+$\hat{Y_i}=238.55423+-.05058X$
+
+```{r}
+ggplot(data = trgdat3,aes(x=dose,y=trg))+geom_point()+geom_smooth(method="lm")
+summary(model)
+```
+
+se=standard error=.00676
+
+$\beta$=-.05058
+
+95% confidence interval for slope:
+
+$\beta \pm$ .00676
+
+(-.064<$\beta$<-.037)
+
+
+Predicted mean triglyceride level for the control group:
+
+$\hat{Y_0}=238.55423-.05058(0)$
+
+$\hat{Y_0}=238.55423$
+
+The observed trg mean of the control group was
+`r meancontrol`
+
+Percent Error= $\dfrac{Observed-Predicted}{Predicted}*100$
+
+$\dfrac{244.2-238.55423}{238.55423}*100=2.37\%$
+
+Since the percent error is $2.37\%$ the predicted and sample mean values for the control group are reasonably similiar

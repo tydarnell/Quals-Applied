@@ -1,0 +1,27 @@
+---
+title: "applied2018"
+author: "Ty Darnell"
+date: "7/24/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=F)
+```
+
+```{r}
+library(tidyverse)
+library(data.table)
+library(knitr)
+```
+
+
+```{r}
+t1=fread("data/t1d.dat")
+t2=fread("data/t2d.dat")
+```
+
+```{r}
+
+```
+

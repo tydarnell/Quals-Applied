@@ -1,0 +1,165 @@
+---
+title: "662 tests"
+author: "Ty Darnell"
+date: "7/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=F)
+```
+
+
+```{r}
+library(tidyverse)
+```
+
+
+# z-stat functions
+
+```{r}
+#one sample z-stat function
+zstat=function(y,u0=0){
+y=na.omit(y)
+yb=mean(y)
+n=length(y)
+s=sd(y)
+zstat=(yb-u0)/(s/sqrt(n))
+zstat
+}
+
+#two sample z-stat function
+#NA values must be removed prior to using this
+zstat2=function(y1,y2,u0=0){
+yb1=mean(y1)
+n1=length(y1)
+s1=sd(y1)
+yb2=mean(y2)
+n2=length(y2)
+s2=sd(y2)
+zstat=((yb1-yb2)-u0)/sqrt(s1^2/n1+s2^2/n2)
+zstat
+}
+
+#p-value function for alpha=.05
+pval=function(z,twosided=T){
+  if (twosided==T) {
+    return(2*pnorm(z))
+  }
+  else
+    pnorm(z)
+}
+
+```
+
+
+
+# Mcnemar test stat
+
+```{r}
+#takes a 2x2 table (in epid form) and computes the mcnemar test stat
+mstat=function(table){
+ t2=table[2]
+ t3=table[3]
+ m=(t2-t3)^2/(t3+t2)
+ m
+}
+```
+
+# Modified Levene Test
+
+Homogeneity of variance – Modified Levene test (Brown-Forsythe test): apply
+ANOVA to the absolute deviations from group medians
+$d_{ij}=|Y_{ij}-\tilde{Y_i}|$
+Use usual F test; rejection indicates lack of homogeneity
+(Ordinary Levene test uses means, not medians)
+Modified Levene test is robust to normality
+does not require equal sample sizes
+
+```{r}
+Levene <- function(y, group)
+{
+group <- as.factor(group) # precautionary
+medians <- tapply(y, group, median)
+resp <- abs(y - medians[group])
+anova(lm(resp ~ group))
+}
+```
+
+
+# Epi functions
+
+```{r}
+etable=function(exposure,disease){
+  t=table(exposure,disease)[2:1,2:1]
+  rownames(t)=c('E+','E-')
+  colnames(t)=c('D+','D-')
+  t
+}
+
+
+riskratio=function(a,b,c,d){
+  e=a/(a+b)
+  f=c/(c+d)
+  c(e,f,e/f)
+}
+
+
+ciriskr=function(ecases,enoncases,uecases,uenoncases){
+  a=ecases
+  b=enoncases
+  c=uecases
+  d=uenoncases
+  e=a/(a+b)
+  f=c/(c+d)
+  rr=e/f
+  z=c(-1.96,1.96)
+  se=sqrt(1/a-1/(a+b)+
+            1/c-1/(c+d))
+  ci=exp(log(rr)+z*se)
+  c("Risk Ratio"=rr,"95 CI"=ci)
+}
+
+
+rateratio=function(cases,noncases,pyrcases,pyrnoncases){
+  a=cases
+  b=noncases
+  p=pyrcases
+  q=pyrnoncases
+  (a/p)/(b/q)
+}
+
+
+cirater=function(cases,noncases,pyrcases,pyrnoncases){
+  a=cases
+  b=noncases
+  p=pyrcases
+  q=pyrnoncases
+  rr=(a/p)/(b/q)
+  se=sqrt(1/a+1/b)
+  z=c(-1.96,1.96)
+  ci=exp(log(rr)+z*se)
+  c("Rate Ratio"=rr,"95 CI"=ci)
+}
+
+
+cioddsr=function(ecases,enoncases,uecases,uenoncases){
+  a=ecases
+  b=enoncases
+  c=uecases
+  d=uenoncases
+  or=(a/c)*(d/b)
+  se=sqrt(1/a+1/b+1/c+1/d)
+  z=c(-1.96,1.96)
+  ci=exp(log(or)+z*se)
+  c("Odds Ratio"=or,"95 CI"=ci)
+}
+
+
+etable2=function(exposure,disease){
+  t=table(exposure,disease)[2:1,2:1]
+  rownames(t)=c('E+','E-')
+  colnames(t)=c('D+','D-')
+  addmargins(t)
+}
+```

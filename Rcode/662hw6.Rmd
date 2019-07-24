@@ -1,0 +1,92 @@
+---
+title: "662hw6"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message = F, warning = F)
+```
+
+```{r}
+library(data.table)
+library(tidyverse)
+library(knitr)
+library(mosaic)
+library(ggfortify)
+library(nortest)
+library(vcd)
+```
+
+```{r}
+column_names=c("id","group","trg")
+column_classes=c("character","factor","integer")
+trgdat=fread("data/trg.txt",colClasses = column_classes)
+setnames(trgdat,column_names)
+```
+
+
+```{r}
+trgdat%>%group_by(group)%>%summarise(N=n(),mean=round(mean(trg),digits=1),median=median(trg),sd=round(sd(trg),digits=2))
+```
+
+Analysis plan:
+Anova model (cell means): $Y_{ij}=\mu_i+\epsilon_{ij}, i=1,2,3,4,5$
+i=1  0 mg/kg (control group)
+i=2  75 mg/kg
+i=3  150 mg/kg
+i=4  300 mg/kg
+i=5  600 mg/kg
+
+$\mu_i$ = population mean trg level in ith doseage group
+
+index j denotes the jth rat in the ith doseage group
+
+$\epsilon_{ij}\overset{iid}{\sim} N(0,\sigma^2)$
+
+The primary interest is in pairwise comparisons between groups, to determine which groups differ from one another. 
+The group sizes are unequal, varying from 7 to 10, so it is more
+appropriate to use the Scheffe or Bonferroni method to adjust for multiple comparisons.
+We will use Scheffe’s method.
+
+```{r}
+trg$group=as.factor(trg$group)
+fit=aov(trgdat$trg~trgdat$group)
+anova(fit)
+```
+
+```{r}
+plot(fit$fitted.values,fit$residuals)
+qq<-qqnorm(fit$residuals)
+qqline(fit$residuals)
+```
+```{r}
+cor.test(qq$x,qq$y)
+```
+
+```{r}
+lillie.test(fit$residuals)
+```
+pvalue=.121>.05 Thus do not reject $H_0$, the normality assumption of the residuals may have been violated.
+
+```{r}
+Levene <- function(y, group)
+{
+group <- as.factor(group) # precautionary
+medians <- tapply(y, group, median)
+resp <- abs(y - medians[group])
+anova(lm(resp ~ group))
+}
+Levene(trgdat$trg,trgdat$group)
+```
+
+Levene Test, do not reject $H_0$ 
+
+```{r}
+scheffe=pairw.anova(trgdat$trg,trgdat$group,conf.level=.95,method="scheffe")
+scheffe$summary
+```
+```{r}
+m1=aov(trgdat$trg~trgdat$group)
+Anova(m1)
+```
+
