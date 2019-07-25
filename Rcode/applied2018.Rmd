@@ -21,6 +21,7 @@ t1=fread("data/t1d.dat")
 t2=fread("data/t2d.dat")
 ```
 
+
 ```{r}
 
 ```
