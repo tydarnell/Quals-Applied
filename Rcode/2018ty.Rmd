@@ -1,0 +1,30 @@
+---
+title: "2018applied"
+author: "Ty Darnell"
+date: "7/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning=F)
+library(tidyverse)
+library(data.table)
+library(knitr)
+```
+
+
+```{r}
+tab=fread("t1d.dat")
+dat=fread("t2d.dat")
+```
+
+
+```{r}
+dat2=dat%>%mutate(Sex=as.numeric(Sex=="M"))
+```
+
+
+```{r}
+
+```
+
