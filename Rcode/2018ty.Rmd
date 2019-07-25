@@ -20,21 +20,39 @@ t2=fread("data/t2d.dat")
 
 
 ```{r}
-t2=dat%>%mutate(Sex=as.numeric(Sex=="M"))
+t2=t2%>%mutate(Sex=as.numeric(Sex=="M"))
+```
+
+## 2a
+
+```{r}
+est=t1%>%group_by(intervention)%>%summarise(n=sum(count),success=sum(count*outcome),p=success/n)
+est
 ```
 
 
 ```{r}
-est=t1%>%group_by(intervention)%>%summarise(n=sum(count),success=sum(count*outcome))
 n=75
 p0=19/75
 p1=30/75
+```
+
+
+```{r}
 se=function(n,p){
   se=sqrt(p*(1-p)/n)
   se
 }
+```
+
+
+```{r}
 se0=se(n,p0)
 se1=se(n,p1)
+```
+
+
+```{r}
 ci95=function(p,se){
   a=p-1.96*se
   b=p+1.96*se
@@ -44,6 +62,34 @@ ci95=function(p,se){
 
 
 ```{r}
+controlci=ci95(p0,se0)
+interventionci=ci95(p1,se1)
+controlci
+interventionci
+```
 
+```{r}
+or=function(p1,p2){
+  a=p1/(1-p1)
+  b=p2/(1-p2)
+  a/b
+}
+```
+
+## 2b
+
+```{r}
+rd=p1-p0
+serd=sqrt(se0^2+se1^2)
+ci95(rd,serd)
+```
+
+## 2c
+
+```{r}
+z=rd/serd
+z
+pval=2*(1-pnorm(z))
+pval
 ```
 
