@@ -14,13 +14,32 @@ library(knitr)
 
 
 ```{r}
-tab=fread("data/t1d.dat")
-dat=fread("data/t2d.dat")
+t1=fread("data/t1d.dat")
+t2=fread("data/t2d.dat")
 ```
 
 
 ```{r}
-dat2=dat%>%mutate(Sex=as.numeric(Sex=="M"))
+t2=dat%>%mutate(Sex=as.numeric(Sex=="M"))
+```
+
+
+```{r}
+est=t1%>%group_by(intervention)%>%summarise(n=sum(count),success=sum(count*outcome))
+n=75
+p0=19/75
+p1=30/75
+se=function(n,p){
+  se=sqrt(p*(1-p)/n)
+  se
+}
+se0=se(n,p0)
+se1=se(n,p1)
+ci95=function(p,se){
+  a=p-1.96*se
+  b=p+1.96*se
+  c(a,b)
+}
 ```
 
 
