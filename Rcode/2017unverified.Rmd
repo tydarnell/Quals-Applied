@@ -1,132 +1,408 @@
 ---
-title: "Qual 2017"
-author: "Benjana Guraziu"
-date: "7/16/2019"
+title: "2017unverified"
+author: "Ty Darnell"
+date: "7/25/2019"
 output: html_document
 ---
 
-1a)
-```{r}
-data <- read.csv("~/Downloads/subtype.txt", sep="")
-
-obj = lm(response ~ factor(clin_sub)-1, data = data[data$treatment == 1,]) #fitting full model
-
-summary(obj)
-```
-1a) ii
-```{r}
-
-##contrast based approach
-
-library(multcomp)
-contrast = matrix(c(1, -1), nrow = 1)
-result = glht(obj, linfct = contrast)
-summary(result)
-
-##get t statistic, if you square it you'll get the F statistic (for the other approach) (df = 1 which is rows of C or difference in number of parameters in full vs reduced model, denominator : n-q - df of SSE)
-##p-value is < 0.05, so reject hypothesis
-
-##only looking at one arm, so only one variable here
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-1a) iii)
+# Problem 1
 
 ```{r}
-library(car)
-leveneTest(y = data$response[data$treatment == 1])
+#import data
+df_perio<-read.table(file="C:\\Users\\anndo\\Documents\\MS_qual_practice\\2017\\application\\data\\motor.txt",header=T)
+
+#view data to check if import successful
+#View(df_perio)
+
+#------------------------------------
+# Prelim: Check data for errors
+#------------------------------------
+
+#convert '.' to NA
+df_perio$PD_post<-as.numeric(as.character(df_perio$PD_post))
+
+summary(df_perio)
+
+#convert kg to lb for better understanding
+summary(df_perio$bweight*2.2/1000)
+
+#Variable check
+#ID - good
+#Group - good
+#GA_ultra - data error GA=73, not possible gestation
+#GA_est - good
+#bweight - very low weight at 1.276 lb, but 
+#possible due to prematurity, so leave
+#sex - good
+#ppnum -good
+#PD_pre - good
+#PD_post - good
+
+#decision to set value with GA_ultra=73 to missing
+ind<- which(df_perio$GA_ultra==73)
+df_perio$GA_ultra[ind]<-NA
+
+summary(df_perio)
+
+#------------------------------------
+# Part a)
+#------------------------------------
+
+#mean number of pregnancies per woman rounded to 2 dec. places
+mean_preg<-round(mean(df_perio$ppnum),2)
+
+#------------------------------------
+# Part b)
+#------------------------------------
+
+#probability 
+expected<-(1-ppois(3,1.5))*nrow(df_perio)
+#[1] 29.73603 -> 30 women
+
+which(df_perio$ppnum>=4)
+#integer(0)
+#thus, p_hat2=0
+
+#------------------------------------
+# Part c)
+#------------------------------------
+
+#Shapiro-Wilk test for normality
+shapiro.test(df_perio$GA_ultra)
+#Shapiro-Wilk normality test
+#data:  df_perio$GA_ultra
+#W = 0.74326, p-value < 2.2e-16
+
+#q-q plot
+qqnorm(df_perio$GA_ultra)
+
+#------------------------------------
+# Part d)
+#------------------------------------
+
+#Classify both versions of gestational age into 3 intervals, 
+#(0,37), [37,40), and [40,inf)
+cut.points<-c(0,37,40,'inf')
+GA_est_factor<-cut(df_perio$GA_est,cut.points,right=F)
+GA_ult_factor<-cut(df_perio$GA_ultra,cut.points,right=F)
+
+#Cohen's Kappa test for agreement
+require(fmsb)
+Kappa.test(GA_est_factor,GA_ult_factor)
+# data:  GA_est_factor and GA_ult_factor
+# Z = 16.66, p-value < 2.2e-16
+# 95 percent confidence interval:
+#   0.6276458 0.7519282
+# sample estimates:
+#   [1] 0.689787
+
+#------------------------------------
+# Part e)
+#------------------------------------
+#dichotomize data to define preterm birth
+df_perio_preterm<-df_perio[which(df_perio$GA_ultra<37),]
+
+#preterm counts for each pregnancy category (0,1,2, or 3)
+freq_pre0<-nrow(df_perio_preterm[which(df_perio_preterm$ppnum==0),])
+freq_pre1<-nrow(df_perio_preterm[which(df_perio_preterm$ppnum==1),])
+freq_pre2<-nrow(df_perio_preterm[which(df_perio_preterm$ppnum==2),])
+freq_pre3<-nrow(df_perio_preterm[which(df_perio_preterm$ppnum==3),])
+
+#total counts in each prengancy category
+freq0<-nrow(df_perio[which(df_perio$ppnum==0),])
+freq1<-nrow(df_perio[which(df_perio$ppnum==1),])
+freq2<-nrow(df_perio[which(df_perio$ppnum==2),])
+freq3<-nrow(df_perio[which(df_perio$ppnum==3),])
+
+#test for trend
+prop.trend.test(c(freq_pre0,freq_pre1,freq_pre2,freq_pre3),c(freq0,freq1,freq2,freq3))
+#Chi-squared Test for Trend in Proportions
+#
+#data:  c(freq_pre0, freq_pre1, freq_pre2, freq_pre3) out of c(freq0, freq1, freq2, freq3) ,
+#using scores: 1 2 3 4
+#X-squared = 5.8412e-05, df = 1, p-value = 0.9939
+
+#------------------------------------
+# Part f)
+#------------------------------------
+
+#create identifier for preterm birth (should have done this earlier, idiot)
+df_perio$preterm<-ifelse(df_perio$GA_ultra<37,"preterm","fullterm")
+
+#contingency table
+tbl_f<-table(df_perio$group,df_perio$preterm)
+
+#chi-squared test
+chisq.test(tbl_f)
+#X-squared = 0.42615, df = 1, p-value = 0.5139
+
+#------------------------------------
+# Part g)
+#------------------------------------
+
+df_perio_1<-df_perio[which(df_perio$group==1),]
+
+#by hand
+xbar_diff<-mean(na.exclude(df_perio_1$PD_pre-df_perio_1$PD_post))
+#[1] 0.00337733
+sd_diff<-sd(na.exclude(df_perio_1$PD_pre-df_perio_1$PD_post))
+#[1] 0.4993049
+
+t.test(df_perio_1$PD_pre,df_perio_1$PD_post,paired=T)
+#Paired t-test
+#
+#data:  df_perio_1$PD_pre and df_perio_1$PD_post
+#t = 0.089735, df = 175, p-value = 0.9286
+#alternative hypothesis: true difference in means is not equal to 0
+#95 percent confidence interval:
+#  -0.07090259  0.07765725
+#sample estimates:
+#  mean of the differences 
+#0.00337733 
+
+#------------------------------------
+# Part h)
+#------------------------------------
+
+df_perio_prenatal<-df_perio[which(df_perio$group==1),]
+df_perio_postpartum<-df_perio[which(df_perio$group==2),]
+diff1<-na.exclude(df_perio_prenatal$PD_pre-df_perio_prenatal$PD_post)
+diff2<-na.exclude(df_perio_postpartum$PD_pre-df_perio_postpartum$PD_post)
+t.test(diff1,diff2,paired=F)
+#Welch Two Sample t-test
+#
+#data:  diff1 and diff2
+#t = 3.6257, df = 345.94, p-value = 0.0003314
+#alternative hypothesis: true difference in means is not equal to 0
+#95 percent confidence interval:
+#  0.08070992 0.27209443
+#sample estimates:
+#  mean of x   mean of y 
+#0.00337733 -0.17302484
+
+#by hand
+t=(mean(diff1)-mean(diff2))/sqrt(var(diff1)/length(diff1)+var(diff2)/length(diff2))
+#[1] 3.625745
 ```
 
-iv)
+# Problem 2
 
 ```{r}
-contrast = matrix(c(2, -1), nrow = 1)
-result = glht(obj, linfct = contrast)
-summary(result)
+
+#import data
+df_cancer<-read.table("C:/Users/anndo/Documents/MS_qual_practice/2017/application/data/subtype.txt",
+                      header=T)
+
+#view data
+View(df_cancer)
+
+#-----------------------------------
+# a), Part ii)
+#-----------------------------------
+
+####################################
+#METHOD 1: Use contrast statements
+####################################
+df_cancer_chemo<-df_cancer[which(df_cancer$treatment==1),]
+
+#fit linear model (make sure to convert clin_sub to a factor)
+#-1 to convert from reference cell to cell means coding
+lm_aii_full<-lm(response~factor(clin_sub)-1,data=df_cancer_chemo)
+
+#-----------------------------------------
+#METHOD 1 A) - using the multcomp package
+#-----------------------------------------
+require(multcomp)
+#create contrast matrix
+#want to test if beta1=beta2 -> beta1-beta2=0
+#-> C=[1,-1] (no intercept in cell means)
+contrast_aii=matrix(c(1,-1),nrow=1)
+
+#glht stands for general linear hypothesis testing
+result_aii=glht(lm_aii_full,linfct=contrast_aii)
+summary(result_aii)
+# Simultaneous Tests for General Linear Hypotheses
+# 
+# Fit: lm(formula = response ~ factor(clin_sub) - 1, data = df_cancer_chemo)
+# 
+# Linear Hypotheses:
+#          Estimate Std. Error t value Pr(>|t|)    
+# 1 == 0  -26.752      4.823  -5.547 1.13e-07 ***
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# (Adjusted p values reported -- single-step method)
+
+#-----------------------------------------
+#METHOD 2 A) - using the car package
+#-----------------------------------------
+require(car)
+
+linearHypothesis(lm_aii_full,hypothesis.matrix=contrast_aii)
+# Linear hypothesis test
+# 
+# Hypothesis:
+#   factor(clin_sub)1 - factor(clin_sub)2 = 0
+# 
+# Model 1: restricted model
+# Model 2: response ~ factor(clin_sub) - 1
+# 
+# Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+# 1    167 154938                                  
+# 2    166 130712  1     24226 30.766 1.128e-07 ***
+
+############################################
+#METHOD 2: Compare full and reduced models
+############################################
+
+#full model is above
+
+#reduced model (intercept only)
+lm_aii_reduced<-lm(response~1,data=df_cancer_chemo)
+
+#compare (if you square your t from last method, it will match
+#the F returned in this method)
+anova(lm_aii_reduced,lm_aii_full)
+# Analysis of Variance Table
+# 
+# Model 1: response ~ 1
+# Model 2: response ~ factor(clin_sub) - 1
+#     Res.Df  RSS Df   Sum of Sq    F    Pr(>F)    
+# 1    167 154938                                  
+# 2    166 130712  1     24226 30.766 1.128e-07 ***
+
+#-----------------------------------
+# a), Part iii)
+#-----------------------------------
+require(car)
+leveneTest(y=df_cancer_chemo$response,group=df_cancer_chemo$clin_sub)
+#Levene's Test for Homogeneity of Variance (center = median)
+#       Df F value Pr(>F)
+#group   1  0.8171 0.3673
+#      166 
+
+#-----------------------------------
+#a), Part iv)
+#-----------------------------------
+
+require(car)
+linearHypothesis(lm_aii_full,c(2,-1))
+#Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+#1    167 155323                                  
+#2    166 130712  1     24611 31.255 9.125e-08 ***
+
+#-----------------------------------
+# a), Part v)
+#-----------------------------------
+
+#variance-covariance matrix, which is MSE*inv(SSCP)
+vcov(lm_aii_full)
+#relevel(clin_sub, "1")1                6.507635                  0.0000
+#relevel(clin_sub, "1")2                0.000000                 16.7537
+
+#off-diagonal entry
+vcov(lm_aii_full)[1,2]
+#[1] 0
+
+#--------------------------------------
+# b), Part i)
+#--------------------------------------
+
+#----------------------------------------------------------
+#METHOD 1: Simply looking at interaction term in full model
+#----------------------------------------------------------
+lm_bi_full<-lm(response~factor(clin_sub)*treatment,data=df_cancer)
+#NOTE: In R, factor(clin_sub)*treatment is equivalent to 
+#factor(clin_sub)+treatment+factor(clin_sub):treatment
+
+summary(lm_bi_full)
+# Coefficients:
+#                              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)                   82.333      3.329  24.729  < 2e-16 ***
+# factor(clin_sub)2             -2.641      4.149  -0.637    0.525    
+# treatment                    -19.013      3.923  -4.847 2.03e-06 ***
+# factor(clin_sub)2:treatment   29.393      5.710   5.147 4.82e-07 ***
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 22.83 on 296 degrees of freedom
+# Multiple R-squared:   0.17,	Adjusted R-squared:  0.1615 
+# F-statistic:  20.2 on 3 and 296 DF,  p-value: 6.129e-12
+
+#----------------------------------------------------------
+# METHOD 2: Comparing full (w/ interaction) and reduced
+# (w/out interaction) models
+#----------------------------------------------------------
+
+lm_bi_reduced<-lm(response~factor(clin_sub)+treatment,data=df_cancer)
+anova(lm_bi_reduced,lm_bi_full)
+# Analysis of Variance Table
+# 
+# Model 1: response ~ factor(clin_sub) + treatment
+# Model 2: response ~ factor(clin_sub) * treatment
+# Res.Df    RSS Df Sum of Sq      F   Pr(>F)    
+# 1    297 168020                                 
+# 2    296 154216  1     13805 26.497 4.82e-07 ***
+
+#oh look, the F here is equal to the t^2 from Method 1 (suprise suprise!)
+
+#----------------------------------------------------------------
+# METHOD 3: Supplying contrast statement and using car package
+#----------------------------------------------------------------
+
+contrast_bi<-matrix(c(0,0,0,1),nrow=1)
+
+car::linearHypothesis(lm_bi_full,hypothesis.matrix=contrast_bi)
+# Linear hypothesis test
+# 
+# Hypothesis:
+#   factor(clin_sub)2:treatment = 0
+# 
+# Model 1: restricted model
+# Model 2: response ~ factor(clin_sub) * treatment
+# 
+# Res.Df    RSS Df Sum of Sq      F   Pr(>F)    
+# 1    297 168020                                 
+# 2    296 154216  1     13805 26.497 4.82e-07 ***
+
+#multiple comparisons via Tukey HSD (honest signficant differences)
+#Note: Need to specify an anova model for tukey's test to work in R
+
+#convert molecular subtype to a factor and recode the levels
+df_cancer$clin_sub2<-factor(df_cancer$clin_sub,
+                                levels=c(1,2),
+                                labels=c('HR+','HR-'))
+
+df_cancer$treatment2<-factor(df_cancer$treatment,
+                             levels=c(0,1),
+                             label=c('hormone','chemo'))
+
+lm_bi_aov<-aov(response~clin_sub2*treatment2,data=df_cancer) 
+TukeyHSD(lm_bi_aov)
+
+#--------------------------------------
+# b), Part ii)
+# NOTE: Unbalanced design, use Type 3
+#--------------------------------------
+
+#get R^2 from previous model in part i)
+summary(lm_bi_full)$r.squared
+#[1] 0.1699612
+
+#get R^2 from model using molecular subtype
+lm_bii_full<-lm(response~factor(molecular_sub)*treatment,data=df_cancer)
+summary(lm_bii_full)$r.squared
+#[1] 0.5752786
+
+#compare the two non-nested models
+AIC(lm_bi_full,lm_bii_full)
+#            df      AIC
+#lm_bi_full   5 2734.061
+#lm_bii_full  9 2541.049
+#
+
 ```
-
-v)
-```{r}
-vcov(obj)[1,2] #do not need the whole matrix, just off diagonal
-```
-
-
-2b)
-
-i)
-
-```{r}
-#full
-m1 = lm(response ~ factor(clin_sub)*treatment, data = data)
-summary(m1)
-
-
-#reduced
-m0 = lm(response ~ factor(clin_sub) + treatment, data = data)
-
-#compare the 2
-anova(m1, m0)
-
-#p-value is the same for wald (b_3 = 0) and anova
-
-aggregate(m1$fitted ~ data$treatment + factor(data$clin_sub), FUN = mean)
-
-##implies inconsistency, implies interaction term matters
-
-
-
-### (other example, if you are looking at whether main effects in an interaction model, then you have full model which is interaction, and reduced model which is just the other variable)
-
-```
-
-
-ii)
-
-```{r}
-m1m = lm(response ~ factor(molecular_sub)*treatment, data = data)
-
-#clin
-summary(m1)$r.squared
-
-#molecular
-summary(m1m)$r.squared
-
-##different number of parameters, BIC/AIC better
-BIC(m1)
-
-BIC(m1m) #molecular subtype model better
-
-
-## R^2 will always increase with more parameters. BIC is better way of evaluating
-```
-
-iii)
-
-```{r}
-#can't do direct hypothesis test b/c they're not nested
-
-
-
-```
-
-
-3) - done by hand
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

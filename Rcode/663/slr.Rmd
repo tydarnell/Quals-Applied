@@ -1,0 +1,19 @@
+---
+title: "slr"
+author: "Ty Darnell"
+date: "April 2, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=F)
+```
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(pracma)
+library(matlib)
+library(knitr)
+```
+

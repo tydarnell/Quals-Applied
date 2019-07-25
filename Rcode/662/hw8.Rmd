@@ -1,0 +1,237 @@
+---
+title: "hw8"
+author: "Ty Darnell"
+date: "November 26, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(data.table)
+library(magrittr)
+library(survival)
+library(ggfortify)
+library(reshape2)
+knitr::opts_chunk$set(echo = TRUE,warning=F, message=F)
+#options(scipen=999)
+```
+
+# Problem 1
+
+## Part a
+
+```{r}
+cnames=c("status", "N.total", "N.h", "N.c", "n.total", "n.h", "n.c")
+dat=fread("HW8_Q1.txt")
+colnames(dat)=cnames
+```
+
+Crude Death Rate per 100,000 operations
+
+$\dfrac{100,000*deaths}{operations}$
+
+ halothane
+
+$\dfrac{2375}{146200}*100,000=1624.487$ deaths per 100,000 operations
+
+ cyclopropane
+ 
+ $\dfrac{2109}{68169}*100,000=3093.782$ deaths per 100,000 operations
+ 
+ Using a Z-test for proportions to determine if the two rates are significantly different.
+ 
+ $\alpha=.05$
+ 
+ $H_0: \pi_1= \pi_2$
+ 
+ $H_A: \pi_1 \neq \pi_2$
+ 
+```{r}
+prop.test(x=c(2375,2109), n=c(146200,68169), alternative = "two.sided")
+```
+ 
+Since p-value < $\alpha$ reject $H_0$ 
+
+Conclude there is a significant differnce between the two rates.
+
+## Part b
+
+```{r}
+dat%<>%mutate(p.h=n.h/N.h,p.c=n.c/N.c)
+
+dat2=dat %>%
+mutate(varProph = p.h*(1-p.h)/N.h,
+varPropc = p.c*(1-p.c)/N.c,
+weights = N.total/sum(N.total))
+
+ans=dat2%>% summarize(stdProph = sum(p.h*weights),
+          stdPropc = sum(p.c*weights),
+          adjDiff = stdProph-stdPropc,       
+          varAdjDiff = sum(weights^2*(varProph+varPropc))/sum(weights)^2, 
+          Z = (adjDiff)/sqrt(varAdjDiff),          
+          pValue = pnorm(Z)) 
+
+stdh=ans$stdProph*100000
+stdc=ans$stdPropc*100000
+```
+
+Standardized Halothane = `r stdh`
+
+Standardized Cyclopropane = `r stdc`
+
+Using a Z-test to determine if the two rates are significantly different.
+ 
+ $\alpha=.05$
+ 
+ $H_0: \pi_{1_{adj}}= \pi_{2_{adj}}$
+ 
+$H_A: \pi_{1_{adj}} \neq \pi_{2_{adj}}$
+ 
+```{r}
+kable(ans)
+```
+ 
+ Reject $H_0$ since p-value$<\alpha$
+ 
+ Conclude the two standardized rates are not equal.
+ 
+## Part c
+ 
+```{r}
+dati=dat %>% 
+mutate(refPop = n.total/N.total,
+exp=N.h*refPop)
+ans2=dati%>% summarize(o = sum(n.h), 
+            e=sum(exp),          
+            s = o/e,          
+            varO = o,         
+            varE = sum((N.h/N.total)^2*n.total),
+            varS = (varO+s^2*varE)/e^2,   
+            Z = (s-1)/sqrt(varS),
+            pVal = pnorm(Z))
+```
+ 
+```{r}
+kable(ans2)
+o=ans2$o
+e=ans2$e
+```
+ Using a Z-test to test whether $\pi_{halothane}/\pi_{overall}$=1
+ 
+ $\alpha=.05$
+ 
+ $\pi_{halothane}=$ `r o`
+ 
+ $\pi_{overall}=$ `r e`
+ 
+ Standardized Incidence Ratio =$s=\dfrac{O}{E}$
+ 
+ =$\pi_{halothane}/\pi_{overall}$=`r ans2$s`
+
+$H_0:\pi_{halothane}/\pi_{overall}=1$
+
+$H_A:\pi_{halothane}/\pi_{overall}\neq 1$
+
+$Var(s)=\dfrac{Var(O)+s^2Var(E)}{E^2}$ = `r ans2$varS`
+
+Since `r ans2$pVal` $<\alpha$
+
+Reject $H_0$ conclude $\pi_{halothane}/\pi_{overall}\neq 1$
+
+# Problem 2
+
+## Part a
+
+```{r}
+sur=fread("HW8_SURV.txt")
+cnames2=c("id","timedeath","death","age","group")
+colnames(sur)=cnames2
+```
+
+```{r}
+sur2=sur%>%arrange(timedeath)
+fit <- survfit(Surv(timedeath, death)~group,data=sur2)
+autoplot(fit,xlab="t",ylab="S(t)",main = "Kaplan-Meier Curves for Placebo and Treatment Groups")
+summary(fit)
+```
+
+## Part b
+
+Log rank test to test whether the distribution of survival times
+is the same in the two groups.
+
+$\alpha=.05$
+
+$H_0: S_1(t)=S_2(t) \ \forall t$
+
+$H_A: S_1(t)\neq S_2(t)$ for at least one t
+
+```{r}
+survdiff(Surv(timedeath, death)~group,data=sur2)
+```
+
+p-value=.003<$\alpha$
+
+Reject $H_0$ since p-value< $\alpha$, thus $S_1(t)\neq S_2(t)$ for at least one t
+
+## Part c
+
+Using the proportional hazards model to test whether the distribution of survival times is the same in the two groups.
+
+$\beta$=-0.6972
+
+$\alpha=.05$
+
+$H_0: \beta =0$
+
+$H_A: \beta \neq 0$
+
+
+```{r}
+ phaz=coxph(Surv(timedeath, death)~group,data=sur2)
+phaz
+```
+
+pvalue=.00358<$\alpha$
+
+Reject $H_0$ conclude the $\beta$ coefficient is significantly different from 0. Thus the distribution of survival times is not the same in the two groups.
+
+## Part d
+
+```{r}
+conf=exp(confint(phaz))
+```
+
+
+Estimate for hazard ratio for group 2 relative to group 1= 0.4980
+
+95% CI for the true hazards ratio: `r conf`
+
+## Part e
+
+```{r}
+ phaz1=coxph(Surv(timedeath, death)~group+age,data=sur2)
+phaz1
+```
+
+Adding age to the proportional hazards model
+
+p-value for age=0.03387
+
+since p-value < $\alpha$, age does have a signifcant effect on survival.
+
+$\beta$ for group adding in age= 0.48639
+
+Adjusting for age does not make a substantial difference to the estimate of the treatment effect since the group coefiecient does not change substantially.
+
+## Part f
+
+Median survival time for placebo group=197
+
+S(t)=.5 at t=197
+
+```{r}
+sur2%>%filter(group==1)%>%summarize(median=median(timedeath))
+```
+

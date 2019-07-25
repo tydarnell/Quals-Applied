@@ -1,0 +1,158 @@
+---
+title: "Power"
+output:
+  prettydoc::html_pretty:
+     theme: cayman
+     df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=F)
+```
+
+```{r,echo=F}
+library(data.table)
+library(tidyverse)
+library(modelr)
+library(knitr)
+library(matlib)
+library(ggfortify)
+library(linmod)
+```
+
+
+```{r}
+library(pwr)
+```
+
+
+# Method 1: Using exisiting power functions
+
+## two sample t-test
+
+```{r}
+effect= pwr.t.test(n = 20, sig.level = 0.05,  power = 0.8, type = "two.sample")
+power= pwr.t.test(n = 20, d=0.9, sig.level = 0.05,  type = "two.sample")
+samplesize = pwr.t.test(d=0.9, sig.level = 0.05, power= 0.8,  type = "two.sample")
+```
+
+
+```{r,echo=F}
+result=c(effect$d,power$power,samplesize$n)
+name=c("d","power","n")
+kable(rbind(name,round(result,digits=3)),row.names = F)
+```
+
+
+## two sample freq comparison
+
+
+# Method 2: write own power function
+
+
+n is the total sample size and design is balanced
+mu1 and mu2 are means of the two comparison groups
+sigma2 is the variance of the random error
+omega is the non-central parameter
+
+
+```{r}
+omega<- function(n, mu1, mu2, sigma2){
+  return(n*(mu1-mu2)^2/(4*sigma2))
+ }
+```
+
+
+## varing sample size
+
+
+```{r}
+n<- seq(50,1000, by=50) 
+n.omega<- omega(n, 0, 0.25, 1)
+
+n.power<- rep(1, length(n.omega)) 
+for(k in 1:length(n.omega)){
+  f.crit<- qf(0.95, df1=1, df2=n[k]-2, 0)
+  n.power[k]<-1-pf(f.crit, df1=1, df2=n[k]-2, n.omega[k])
+ }
+
+plot(n, n.power, ylim=c(0,1),xlab="Sample Size", ylab="Power")
+points(n, n.power, type="l", lty=1)
+
+```
+
+
+
+## varying mu2
+
+
+```{r}
+n.omega<- omega(n, 0, 0.15, 1)
+
+n.power<- rep(1, length(n.omega)) 
+for(k in 1:length(n.omega)){
+  f.crit<- qf(0.95, df1=1, df2=n[k]-2, 0)
+   n.power[k]<-1-pf(f.crit, df1=1, df2=n[k]-2, n.omega[k])
+ }
+
+plot(n, n.power, ylim=c(0,1),xlab="Sample Size", ylab="Power")
+points(n, n.power, type="l", lty=2)
+
+```
+
+
+
+## varying sigma2
+
+```{r}
+n.omega<- omega(n, 0, 0.25, 2)
+
+n.power<- rep(1, length(n.omega)) 
+for(k in 1:length(n.omega)){
+  f.crit<- qf(0.95, df1=1, df2=n[k]-2, 0)
+   n.power[k]<-1-pf(f.crit, df1=1, df2=n[k]-2, n.omega[k])
+ }
+
+plot(n, n.power, ylim=c(0,1),xlab="Sample Size", ylab="Power")
+points(n, n.power, type="l", lty=3)
+
+legend(700, 0.3, lty=c(1,2,3), legend=c("mu2=0.25", "mu2=0.15", "sigma2=2"))
+```
+
+
+
+
+# Method 2: run power analysis with simulation
+
+
+
+
+```{r}
+mu1=0
+mu2=0.25
+n=500
+sigma2=1
+n.sim<- 1000  #number of simulations
+n.test<- rep(0, n.sim)
+
+for(k in 1:n.sim){
+  x<- c(rep(0,n/2), rep(1,n/2))
+  y<- mu1 + mu2*x + rnorm(n, 0, sigma2)
+  flm<- lm(y~x)
+  n.test[k]<- (summary(flm)$coefficients[2,3])^2
+  }
+```
+
+
+```{r}
+power = mean(n.test>1.96^2)
+```
+
+
+```{r,echo=F}
+kable(power,col.names="Power")
+
+```
+
+
+

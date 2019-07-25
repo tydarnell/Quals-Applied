@@ -1,0 +1,145 @@
+---
+title: "662 Hw3"
+author: "Ty Darnell"
+date: "September 18, 2018"
+output: html_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(message=F,comment="",warning=F)
+```
+
+```{r setup, include=F}
+library(tidyverse)
+library(knitr)
+pgedat=read_table2("HW2_PGE.txt",col_names=c("patient", "ipge", "ca", "hypercalcemia"))
+pgedat$hypercalcemia=as.factor(pgedat$hypercalcemia)
+```
+
+#Problem 1
+##a)
+
+```{r}
+ggplot(pgedat,aes(sample=ca))+geom_qq()+geom_qq_line()
+```
+
+Based on the QQ plot, the distribution of `ca` appears approxiamtely normal
+
+##b)
+sample mean, sample sd
+```{r}
+c(mean(pgedat$ca),sd(pgedat$ca))
+```
+
+95% Confidence interval for population mean of `ca`
+
+```{r}
+p.ca<- pgedat$ca
+t.test(p.ca)$conf.int[1:2]
+```
+
+##c)
+### double sample size:
+
+ci
+
+```{r}
+cit <- function(n,u,s){
+ me <-  qt(.975,n-1)*(s/sqrt(n))
+ c(u-me,u+me)
+}
+cime <- function(n,u,s){
+  2*(qt(.975,n-1)*(s/sqrt(n)))
+}
+m <- mean(p.ca)
+se <- sd(p.ca)
+cit(21*2,m,se)
+me1 <- cime(21,m,se)
+me2 <- cime(21*2,m,se)
+```
+
+Percent change of ci width:
+
+```{r}
+((me2-me1)/me1)*100
+```
+
+
+### triple sample size:
+
+ci:
+
+```{r}
+cit(21*3,m,se)
+me3 <- cime(21*3,m,se)
+```
+
+percent change of ci width:
+
+```{r}
+((me3-me1)/me1)*100
+```
+
+##d)
+
+95% Bootstrap CI for population mean of ca
+
+```{r, include=T,echo=T}
+
+y <- pgedat$ca
+mean.y <- mean(y)
+var.y <- var(y)
+n <- length(y)
+boots <- 1000
+zs <- matrix(0,1,boots)
+for (jj in 1:boots){
+ysamp <- sample(y,size=n,replace=T)
+zs[jj] <- (mean(ysamp)-mean.y)/sqrt(var(ysamp)/n)
+}
+lower.t <- quantile(zs,0.975)
+upper.t <- quantile(zs,0.025)
+lower.y <- mean.y - lower.t*sqrt(var.y/n)
+upper.y <- mean.y - upper.t*sqrt(var.y/n)
+
+c(lower.y,upper.y)
+```
+
+
+
+##e)
+
+Sample median of ca
+
+```{r}
+median(y)
+```
+
+95% CI for sample median (from SAS Proc Univariate cipctldf): 
+
+(10.1,12.1) 
+
+```{r, echo=FALSE, fig.cap="SAS Output", out.width = '40%'}
+knitr::include_graphics("sasoutputhw3.png")
+```
+
+```{r, echo=FALSE, fig.cap="SAS Code", out.width = '40%'}
+knitr::include_graphics("sascodehw3.png")
+```
+
+
+#Problem 2
+##a)
+
+$\bar{Y}$ is normally distributed with a mean of 1 and a variance of 1 and a standard error of 1.
+
+$\bar{Y} \sim N(1,1)$
+
+##b)
+
+```{r}
+ pnorm(2.85,1,1)-pnorm(1,1,1)
+```
+
+##c)
+
+$W \sim N(4,16)$
+

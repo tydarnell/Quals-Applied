@@ -1,0 +1,83 @@
+---
+title: "hw3"
+author: "Ty Darnell"
+date: "March 1, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=F, message=F)
+library(tidyverse)
+library(knitr)
+library(data.table)
+library(matlib)
+library(ppcor)
+```
+
+```{r}
+hw3=fread("FILEN.DAT")
+cnames=c("id","year","cohort","date","days","timess","height","weight","age","area","temp","barom","humid","avtrel","avtrsp","avfvc")
+colnames(hw3)=cnames
+hw3$weight=as.numeric(hw3$weight)
+hw3=hw3%>%filter(!is.na(weight))
+hw3=hw3%>%mutate(bmi=weight/((height/100)^2))
+```
+
+
+# Problem 3 a)
+
+## part i)
+
+```{r}
+pcor.test(hw3$avfvc, hw3$age, hw3[,c("height", "weight", "bmi", "area", "avtrel", "avtrsp", "temp","barom","humid")])
+```
+
+## part ii)
+
+```{r}
+spcor.test(hw3$avfvc, hw3$age, hw3[,c("height", "weight", "bmi", "area", "avtrel", "avtrsp", "temp","barom","humid")])
+```
+
+## part iii)
+
+```{r}
+cor.test(hw3$age, hw3$avfvc)
+```
+
+# Problem 3 b)
+
+## part i)
+
+```{r}
+mod=lm(data = hw3, avfvc ~ height + weight + bmi + area + age + avtrel + avtrsp + avtrel*avtrsp+ temp + barom + humid)
+datresid=hw3%>%mutate(resid=resid(mod))%>%mutate(sresid=abs(studres(mod)))
+```
+
+```{r}
+topresid=datresid%>%mutate(absresid=abs(resid))%>%top_n(n=5,wt=sresid)
+```
+
+```{r}
+topresid%>%dplyr::select(c(id,sresid))%>%arrange(desc(sresid))
+```
+
+## part ii)
+
+```{r}
+shapiro.test(studres(mod))
+```
+
+
+## part iii)
+
+```{r}
+hist(studres(mod))
+```
+
+
+## part iv)
+
+```{r}
+plot(mod$fitted.values,studres(mod))
+```
+

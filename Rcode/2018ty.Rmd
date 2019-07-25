@@ -14,8 +14,8 @@ library(knitr)
 
 
 ```{r}
-tab=fread("t1d.dat")
-dat=fread("t2d.dat")
+tab=fread("data/t1d.dat")
+dat=fread("data/t2d.dat")
 ```
 
 

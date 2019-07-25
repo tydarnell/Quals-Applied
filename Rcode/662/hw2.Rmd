@@ -1,0 +1,33 @@
+---
+title: "hw2"
+author: "Ty Darnell"
+date: "February 19, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=F, message=F)
+library(tidyverse)
+library(knitr)
+library(data.table)
+library(matlib)
+```
+
+```{r}
+hw2=fread("hw2.dat")
+```
+
+```{r}
+mod=lm(days~index,data=hw2)
+summary(mod)
+mod$rank
+anova(mod)
+```
+
+```{r}
+attach(hw2)
+new = data.frame(index=16)
+predict(mod, new, interval = "prediction")
+predict(mod, new, interval = "confidence")
+```
+

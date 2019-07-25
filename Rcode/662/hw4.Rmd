@@ -1,0 +1,200 @@
+---
+title: "hw4"
+author: "Ty Darnell"
+date: "October 2, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(magrittr)
+library(knitr)
+pku=read_table("HW4_PKU.txt",col_names=c("pair","case","sibling"),skip=1)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Problem 1
+
+##Part a
+
+```{r}
+differences=pku$case-pku$sibling
+```
+
+`case`= the iq of the group of children with PKU
+ 
+`control`= the iq of the group of normal siblings of closest age 
+
+`diff`= `case`-`control`
+
+$\mu_{diff}=$ population mean of the differences
+
+A suitable null and alternative hypotheses is:
+
+$H_0:\mu_{diff} =0$
+
+$H_A: \mu_{diff} \neq 0$
+
+##Part b
+
+```{r}
+sm=mean(differences)
+se=sd(differences)/sqrt(21)
+T= (sm-0)/se
+crit.t=qt(.975,20)
+pvalue=2*pt(T,20)
+```
+
+The sample mean of the differences is $\bar{y}$= `r sm`
+
+The standard error of the differences is se = `r se`
+
+$\alpha= .05$
+
+n=21
+
+n-1 degrees of freedom=20
+
+Test statistic= $t=\dfrac{\bar{y}-\mu}{se}$=`r T`
+
+Critical t=`r crit.t`
+
+pvalue=`r pvalue`
+
+Critical Region: {t: |t| > `r crit.t`}
+
+|`r T`|>`r crit.t`
+
+Since pvalue < .05 and test statistic is in the critical region
+
+Reject $H_0$
+
+##Part c
+
+```{r}
+me= crit.t * se
+ci=c(sm-me,sm+me)
+```
+
+margin of error=me=`r me`
+
+cofidence interval =ci=$(\bar{y}-me,\bar{y}+me)$=`r ci`
+
+##Part d
+
+We reject the null hypothesis since the p-value is less than the significance level and the test statistic lies inside of the critical region and $\mu_0$ is not in the confidence interval. This means that the mean of the differences between the `case` and `control` groups is statistically significant.
+
+The 95% confidence interval for the population mean is `r ci`
+
+This means we are 95% confident that the popluation mean lies within this interval
+
+##Part e
+
+We are assuming the IQ data is normally distributed, all of the observations are independent of each other. Since we have normal data, unknown variance and not n large, we used a t-test.
+
+
+##Part f
+
+```{r}
+index=0:21
+sorted_differences=sort(differences)
+differences2=c(index,sorted_differences)
+smed=sorted_differences[11]
+(prob=kable(tibble(r=index,prob=pbinom(index,21,.5)),align="l"))
+pval=2*pbinom(6,21,.5)
+```
+
+Sample median = $\hat{\zeta_{.5diff}}=$`r smed`
+
+$\zeta_{.5diff}$=population median of the differences of `case` and `control` IQ.
+
+$H_0:\zeta_{.5diff}=\zeta_{.5,0}$
+
+$H_A: \zeta_{.5diff}\neq \zeta_{.5,0}$
+
+R=number of observations $> \zeta_{.5,0}$
+
+r=5 
+
+n-r=16
+
+Critical Region = $C_{\alpha}=\{r:\{0,1,2,3,4,5\}\leq r_{.025} \ \{16,17,18,19,20,21\}\geq r_{.975}\}$
+
+r=11 (the sample median) is not in $C_{.05}$
+
+p-value = `r pval`
+
+`r pval` > .05 and $\hat{\zeta_{.5diff}}$ is not in the critical region so do not reject $H_0$
+
+## Part g
+
+In d) we rejected $H_0$ and in f) we did not reject $H_0$.
+
+The sign test is non parametric and makes fewer assumptions where as the t-test assumes normality and is parametric. For a small sample size it can be argued that the sign test is a better choice since the assumption of normality is a strong assumption especially based on such a small sample size. It is very possible that in this case, the t-test is not a good approximation.
+
+# Problem 2
+
+A Wilcoxon Rank Sum test is appropriate in this case, because we have two small samples sizes with unknown population variance and no assumption of normality.
+
+```{r}
+Hyper=c(1100,1320,1350,1450,1600,1850,1900,1990,2050,2120,2200,2210,2500,2610,2720)
+Normal=c(1000,1220,1300,1400,1555,1600,1780,1780,1900,2020,2350,2375)
+dat <- data.frame(group=c(rep("Hyper",each=15),rep("Normal",each=12)),avg.na=c(Hyper,Normal))
+
+ (dat.rank=dat%>% arrange(avg.na)%>%mutate(rank=(rank(avg.na,ties.method = "average"))))
+```
+Hyper = the average daily sodium intake of each subject in the hypertension group.
+
+Normal = the average daily sodium intake of each subject in the normal group.
+
+Null hypothesis, the distributions of the two samples are the same.
+
+Alternative hypothesis, the distributions of the two samples are different.
+
+$H_0: \Delta =0$
+
+$H_A: \Delta \neq 0$
+
+```{r}
+hyper.ranksum=dat.rank%>%filter(group=="Hyper")%>%summarise(ranksum=sum(rank))
+normal.ranksum=dat.rank%>%filter(group=="Normal")%>%summarise(ranksum=sum(rank))
+varw=(12*15*28)/12-(12*15*18)/(12*27*26)
+Ew=12*28/2
+
+z=(normal.ranksum-Ew)/sqrt(varw)
+
+pval2=2*pnorm(-1.3668861,0,1)
+```
+$W_1$=`r normal.ranksum`
+
+$Var(W_1)=\dfrac{n_1*n_2(N+1)}{12}-
+\dfrac{n_{1}n_{2}}{12N(N-1)}\sum_{i=1}^{q}t_i(t_i-1)(t_i+1)$
+
+$Var(W_1)=$ `r varw`
+
+$E(W_1)=\dfrac{n_1(N+1)}{2}$
+
+$E(W_1)=$ `r Ew`
+
+$Z=\dfrac{W_1 -E(W_1)}{\sqrt{Var(W_1)}}$
+
+Z=`r z `
+
+p-value=`r pval2`
+
+
+
+$C_{.05}$ two-tailed $=\{z:|z|>1.96\}$
+
+`r z` is not in the critical region.
+
+since `r pval2` >.05  and our z score is not in the critical region, do not reject $H_0$
+
+Thus we can't conclude that the distributions of the Hypertension and Normal samples are different.
+
+Checking the pvalue using the built in Wilcox test in r we get the same result.
+
+```{r}
+wilcox.test(Hyper,Normal,alternative = "two.sided",exact=F,correct=F)
+
+```

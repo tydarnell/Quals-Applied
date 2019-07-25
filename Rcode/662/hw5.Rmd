@@ -1,0 +1,247 @@
+---
+title: "hw5"
+author: "Ty Darnell"
+date: "October 10, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = F,message=F)
+library(tidyverse)
+library(knitr)
+library(epitools)
+pgedat=read_table2("HW2_PGE.txt",col_names=c("patient", "ipge", "ca", "hypercalcemia"))
+pgedat$hypercalcemia=as.factor(pgedat$hypercalcemia)
+```
+
+#Problem 1
+
+$F_1$ = group of subjects without hypercalcemia
+
+$F_2$ = group of subjects with hypercalcemia
+
+$F_1(y)$ = distribution of `ipge` for group of subjects without hypercalcemia
+
+$F_2(y)$ = distribution of `ipge` for group of subjects with hypercalcemia
+
+$H_0:F_1(y)=F_2(y)$ for all y
+
+$H_A: F_1(y)\neq F_2(y)$ for at least one y
+
+$D=\max_y|F_{1n}(y)-F_{2m}(y)|$
+
+$F_{1n}(y)$= Emperical Distribution Function for the sample from $F_1$
+
+$F_{2m}(y)$= Emperical Distribution Function for the sample from $F_2$
+
+```{r}
+hca2=pgedat%>%filter(hypercalcemia==1)
+
+hca1= pgedat%>%filter(hypercalcemia==0)
+
+f1=hca1$ipge
+
+f2=hca2$ipge
+
+ ks.test(f1,f2)
+
+```
+
+Using $\alpha = .05$
+
+D=.62727
+
+pvalue =.03242
+
+since $pvalue<.05$ reject $H_0$
+
+We conclude that the distributions of `ipge` may be different for people with and without hypercalcemia.
+
+#Problem 2
+
+```{r}
+fisher.test(matrix(c(21,2,2,8),nrow=2),alternative="two.sided")
+
+```
+$\pi_1$= Proportion of people dead within 5 years who recieve 1-4 courses of chemotherapy
+
+$\pi_2$= Proportion of people dead within 5 years who recieve 10 or more courses of chemotherapy.
+
+$H_0: \pi_1=\pi_2$
+
+$H_A: \pi_1 \neq \pi_2$
+
+$\alpha=.05$
+
+$pvalue=.0001255$
+
+Reject $H_0$ since $pvalue<.05$
+
+Conclude there is a statistically significant assiociation in the table.
+
+#Problem 3
+
+##Part a
+
+
+```{r}
+church <- matrix(c(89,30514,38,240207),ncol=2,byrow=TRUE)
+colnames(church) <- c("D","Dbar")
+rownames(church) <- c("E","Ebar")
+church <- kable(church)
+church
+```
+
+Where $E = church < 1$ per week
+
+$\bar{E}=church \geq 1$ per week
+
+$D=death$
+
+$\bar{D}=no \ death$
+
+$P(Death)=\dfrac{127}{54848}=.0023$
+
+$P(Church Attendance) =\dfrac{24245}{54848}=.4420$
+
+$P(church and death)=\dfrac{38}{54848}=.0007$
+
+$P(no church and death)=\dfrac{89}{54848}=.0016$
+
+$p_1=P(death|<1 church)=\dfrac{P(<1 church and death)}{P(<1 church)}=\dfrac{.0016}{.5580}=.0029$
+
+$p_2=P(death|church)=\dfrac{P(church and death)}{P(church)}=\dfrac{.0007}{.4420}=.0016$
+
+Relative risk of an arteriosclerotic death in the 3 year follow up period if one usually attends church less than one week compared to once a week or more.
+
+```{r}
+rr=round(.0029/.0016,digits=4)
+```
+
+
+$RR = \dfrac{p_1}{p_2}=\dfrac{.0029}{.0016}=$ `r rr`
+
+This means that a person who attends church less than once a week is 1.8125 times more likely to have an arteriosclerotic death within the 3 year follow up period than someone who attends church at least once a week.
+
+##Part b
+
+```{r}
+or=round((.0029/(1-.0029))/(.0016/(1-.0016)),digits = 4)
+a=1.96*sqrt(1/89+1/38+1/30514+1/24207)
+ci=c(or*exp(-a),or*exp(a))
+```
+
+
+$\hat{OR}=\dfrac{p_1/(1-p_1)}{p_2/(1-p_2)}=\dfrac{.0029/(1-.0029)}{.0016/(1-.0016)}$ = `r or`
+
+95% CI for $\hat{OR}$
+
+$z_{\alpha/2}=1.96$
+
+$\hat{OR}*e^{\pm 1.96\sqrt{1/89+1/38+1/30514+1/24207}}=$ (`r ci`)
+
+##Part c
+
+```{r}
+pe=100*(or-rr)/rr
+```
+
+Percent error of $\hat{OR}=100(OR-RR)/RR=$ `r pe`%
+
+#Problem 4
+
+##Part a
+
+```{r}
+X<-array(c(7,55,31,269,7,20,18,112,7,33,24,114,40,88,45,172,
+            34,50,24,55,27,55,24,58,30,34,17,17),
+          dim=c(2,2,7),
+          dimnames=list(CupsCoffee=c("GE5","LT5"),MIcase=c("Yes","No"),Smoking=c("Never","Former","1-14","15-24","25-34","35-44","45+")))
+rows <- dim(X)[1]
+cols <- dim(X)[2]
+result <- matrix(0, nrow=rows, ncol=cols)
+for (i in seq(rows)) {
+  for (j in seq(cols)) {
+    result[i,j] <- sum(X[i,j,])
+  }
+}
+rownames(result)=c(">=5","<5")
+colnames(result)=c("MI","Control")
+kable(result)
+```
+
+Using R to collapse table 6.11 over the smoking categories yields the same results as the table in problem 6.13.
+
+
+##Part b
+
+```{r}
+p1=round((152/1467)/(335/1467),digits=4)
+p2=round((335/1467)/(1132/1467),digits=4)
+or2=(p1/(1-p1))/(p2/(1-p2))
+b=1.96*sqrt(1/152+1/183+1/335+1/797)
+ci2=c(or2*exp(-b),or2*exp(b))
+```
+
+$E=\geq 5$ cups of coffee per day
+
+$\bar{E}= <5$ cups of coffee per day
+
+$D=MI$
+
+$\bar{D}=Control$
+
+__Odds ratio and 95% CI ignoring smoker status__
+
+$p_1=P(MI| \geq 5 cups)=\dfrac{P(\geq 5 cups and MI)}{P(\geq 5 cups)}=\dfrac{152/1467}{335/1467}$= `r p1`
+
+$p_2=P(MI|<5 cups)=\dfrac{P(<5 cups and MI)}{P(<5 cups)}=\dfrac{335/1467}{1132/1467}$= `r p2`
+
+$\hat{OR}=\dfrac{p_1/(1-p_1)}{p_2/(1-p_2)}=$ `r or2`
+
+95% CI for $\hat{OR}$
+
+$z_{\alpha/2}=1.96$
+
+$\hat{OR}*e^{\pm 1.96\sqrt{1/152+1/183+1/335+1/797}}=$ (`r ci2`)
+
+```{r}
+nosmoke=oddsratio.wald(result)$measure
+nosmoke[c(0,2),]
+```
+
+
+__Odds ratio and 95% CI taking into account smoker status__
+
+```{r}
+never=oddsratio.wald(X[,,1])$measure
+former=oddsratio.wald(X[,,2])$measure
+s1.14=oddsratio.wald(X[,,3])$measure
+s15.24=oddsratio.wald(X[,,4])$measure
+s25.34=oddsratio.wald(X[,,5])$measure
+s35.44=oddsratio.wald(X[,,6])$measure
+s45=oddsratio.wald(X[,,7])$measure
+```
+
+```{r}
+never[c(0,2),]
+former[c(0,2),]
+s1.14[c(0,2),]
+s15.24[c(0,2),]
+s25.34[c(0,2),]
+s35.44[c(0,2),]
+s45[c(0,2),]
+```
+
+##Part c
+
+```{r}
+mantelhaen.test(X)
+```
+$H_0: OR =1$
+
+$H_A: OR \neq 1$
+
+Since pvalue < .05 reject $H_0$
+
+There is evidence that smoking status may confound the association between coffee drinking and MI.

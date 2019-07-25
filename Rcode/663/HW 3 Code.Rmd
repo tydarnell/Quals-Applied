@@ -1,0 +1,192 @@
+---
+title: "HW 3 Code"
+output:
+  prettydoc::html_pretty:
+     theme: cayman
+     df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=F)
+```
+
+
+```{r,echo=F}
+library(data.table)
+library(tidyverse)
+library(modelr)
+library(knitr)
+library(matlib)
+library(ggfortify)
+library(linmod)
+library(alr4)
+library(ppcor)
+library(psych)
+```
+
+
+# Question 2
+
+```{r}
+filen=fread("FILEN.DAT")
+colnames(filen) <- c("subject", "year", "cohort", "date", "days", 
+                     "timsess", "height", "weight", "age", "area",
+                     "temp", "barm", "hum", "avtrel", "avtrsp", "avfvc")
+filen$weight=as.numeric(filen$weight)
+filen=filen%>%filter(!is.na(weight))
+filen=filen%>%mutate(bmi=weight/((height/100)^2))
+```
+
+
+## (a)
+
+```{r}
+fit_a <- lm(avfvc~height+weight+age, data = filen)
+summary.aov(fit_a, intercept = T)
+
+```
+
+
+
+## (b)
+
+```{r}
+
+fit_b <- lm(avfvc~height + weight + bmi + age + avtrel + avtrsp + temp + 
+              barm + hum, data = filen)
+summary(fit_b)$fstatistic
+
+```
+
+
+## (c)
+
+```{r}
+table <- summary.aov(fit_b, intercept = T)
+sum(table[[1]]$`Sum Sq`[2:10])/ sum(table[[1]]$`Sum Sq`[2:11])
+```
+
+
+
+
+## (d)
+
+
+```{r}
+# (d.1)
+linearHypothesis(fit_b, c("height = 0", "weight = 0", "bmi = 0",
+                          "age = 0", "avtrel = 0", "avtrsp = 0",
+                          "temp = 0", "barm = 0", "hum = 0"), test="F")
+```
+
+
+```{r}
+##(d.2)
+fit_d2 <- lm(avfvc~height, data = filen)
+linearHypothesis(fit_d2, c("height = 0"), test="F")
+```
+
+
+```{r}
+##(d.3)
+fit_d3 <- lm(avfvc~height+weight+bmi, data = filen)
+linearHypothesis(fit_d3, c("height = 0"), test="F")
+```
+
+
+```{r}
+#(d.4)
+linearHypothesis(fit_b, c("height = 0"), test="F")
+```
+
+
+```{r}
+#(d.5)
+linearHypothesis(fit_d3, c("height = 0", "weight = 0", "bmi = 0"), test="F")
+```
+
+
+```{r}
+#(d.5)
+linearHypothesis(fit_b, c("height = 0", "weight = 0", "bmi = 0"), test="F")
+```
+
+
+## (e)
+
+```{r}
+linearHypothesis(fit_b, c("hum = 0"), test="F")
+```
+
+
+## (g)
+
+```{r}
+
+summary(fit_b)
+
+```
+
+
+# Question 3
+
+```{r}
+filen$int <- filen$avtrel*filen$avtrsp
+missing_index <- which(rowSums(is.na(filen)) > 0)
+filen <- filen[-missing_index, ]
+```
+
+
+## (a)
+
+```{r}
+#(a.1)
+#pcor.test(avfvc, age, c(height, weight, bmi,area,avtrel,avtrsp,int,temp,barm, hum),data=filen)
+```
+
+
+```{r}
+#(a.2)
+#spcor.test(filen$avfvc, filen$age, filen[,c("height", "weight", "bmi", "area", "avtrel", "avtrsp","int", "temp","barm", "hum")])
+```
+
+
+```{r}
+#(a.3)
+#corr.test(filen$avfvc, filen$age)
+```
+
+
+## (b)
+
+```{r}
+#fit_q3 <- lm(avfvc~height + weight + bmi + area + age + avtrel + avtrsp +int + temp + barm + hum, data = filen)
+#studentized_residuals <- studres(fit_q3)
+```
+
+
+```{r}
+#(b.1)
+#tail(sort(abs(studentized_residuals)), n = 5)
+```
+
+
+```{r}
+#(b.2)
+#ks.test(studentized_residuals, pnorm)
+```
+
+
+```{r}
+#(b.3)
+#plot(hist(studentized_residuals))
+#plot(density(studentized_residuals))
+```
+
+
+```{r}
+#(b.4)
+#plot(fit_q3$fitted.values, studentized_residuals)
+
+```
+

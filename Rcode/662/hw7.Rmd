@@ -1,0 +1,110 @@
+---
+title: "hw7"
+author: "Ty Darnell"
+date: "November 17, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message = F, warning=F)
+library(tidyverse)
+library(knitr)
+```
+
+#Problem 1
+
+$\alpha=.05$
+
+$OR=\dfrac{\pi_1/(1-\pi_1)}{\pi_2/(1-\pi_2)}=3$
+
+$\pi_2$reference proportion=1/50=.02
+
+$\pi_1 =\dfrac{\pi_2OR}{1+\pi_2(OR-1)}=\dfrac{.02*3}{1+.02(3-1)}=0.05769231$
+
+$p_{diff}=\pi_1-\pi_2=0.05769231-.02=0.03769231$
+
+n=100+100=200
+
+$H_0: \pi_1=\pi_2$
+
+$H_A: \pi_1\neq \pi_2$
+
+```{r,echo=F}
+include_graphics("sasc1.PNG")
+include_graphics("sas1.PNG")
+```
+
+power = .28 
+
+The power to dectect OR=3 is .28
+
+I would not reccomend conducting this study because when $H_0$ is false you only reject it 28% of the time.
+
+```{r,echo=F}
+include_graphics("sas2c.PNG")
+include_graphics("sas2.PNG")
+```
+
+
+Using a power of .9 we get n=1102
+
+Thus I would recommend 551 cases and 551 controls in conducting the study.
+
+#Problem 2
+
+##Part a)
+
+$\mu=50$
+
+$sd_x=8$
+
+$sd_e=10$
+
+$\beta=.2$
+
+```{r}
+set.seed(251)
+mu <- 50
+sdx <- 8
+sdy <- 10
+mysim <- function(n,nsims){
+rejects <- 0
+for (ii in 1:nsims){
+x <- rnorm(n,mu,sdx)
+mdiff <- .2*x
+y <- rnorm(n,mdiff,sdy)
+lmd <- lm(y~x)
+if (summary(lmd)$coefficients[8]<0.05) rejects <- rejects + 1
+}
+print(paste("estimated power:",rejects/nsims))
+}
+simres=mysim(413,10000)
+```
+
+Running 10,000 simulations it appears that a sample size of 413 is needed to detect $\beta=.2$ with power=.9
+
+##Part b)
+
+$s_x=8$
+
+$s_e=10$
+
+$Var(y)=Var(\alpha+\beta_1*X+\epsilon)$
+
+$\beta_1^2Var(X)+Var(\epsilon)=.2^2*8^2+10^2=102.56$
+
+$s_y=\sqrt{102.56}=10.12719$
+
+$\rho=\hat{\beta_1}\dfrac{s_X}{s_Y}=.2(8/10.12719)=.158$
+
+$H_0: \rho=0$
+
+$H_A: \rho=.158$
+
+$Z_0=(1/2)\log(\dfrac{1+0}{1-0})=0$
+
+$Z_1=(1/2)\log(\dfrac{1+.158}{1-1.158})=.1593348$
+
+$n=\dfrac{(z_1-\alpha/2+z_1-\beta)^2}{Z_{\rho_1}-Z_{\rho_0}}+3=\dfrac{(1.96+1.28)^2}{(.1593348-0)^2}+3=416.4936\approx 417$
+
+From the sample size formula it appears that a sample size of 417 is needed to detect $\beta=.2$ with power=.9. This is similar to the sample size of 413 from the simulations.

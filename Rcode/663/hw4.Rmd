@@ -1,0 +1,352 @@
+---
+title: "hw4"
+author: "Ty Darnell"
+date: "April 3, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=F)
+```
+
+```{r,echo=F}
+library(tidyverse)
+library(data.table)
+library(alr4)
+library(matlib)
+library(knitr)
+library(ppcor)
+library(modelr)
+library(ggfortify)
+library(olsrr)
+library(kableExtra)
+library(EnvStats)
+library(linmod)
+library(asbio)
+library(DescTools)
+library(multcomp)
+```
+
+```{r}
+tob=fread("tobacco.dat")
+cox=fread("BoxCox.dat")
+colnames(cox)=c('x','y')
+colnames(tob)=c('cotinine','age','bmi', 'educ', 'wet', 'task','lnnsmoke')
+tob$wet=factor(tob$wet)
+tob$task=factor(tob$task)
+```
+
+
+
+```{r}
+hw3=fread("FILEN.DAT")
+cnames=c("id","year","cohort","date","days","timess","height","weight","age","area","temp","barom","humid","avtrel","avtrsp","avfvc")
+colnames(hw3)=cnames
+hw3$weight=as.numeric(hw3$weight)
+hw3=hw3%>%filter(!is.na(weight))
+hw3=hw3%>%mutate(bmi=weight/((height/100)^2))
+```
+
+# Problem 1
+
+## Part i)
+
+```{r}
+mod=lm(data = hw3, avfvc ~ height + weight + bmi + area + age + avtrel + avtrsp + avtrel*avtrsp+ temp + barom + humid)
+vt=ols_vif_tol(mod)
+kable(vt,format="markdown")
+```
+
+
+
+Based on the VIF and tolerance, there appears to be collinearity present. Height, Weight, BMI, area, avtrel, avtrsp, avtrel:avtvsp, humid and temp all have high VIF values and low tolerance values. This is a good indication that collinearity is present. This makes sense because BMI is a function of height and weight so it would likely be correlated with both of those variables. Humid and temp are both aspects of weather and could possibly be correlated with one another. Treadmill elevation and speed would both lead to a more rigorous workout, indicating a more cardiovascularly fit subject.
+
+## Part ii)
+
+
+```{r}
+x1=model.matrix(~ height + weight + bmi + area + age + avtrel + avtrsp + avtrel*avtrsp+ temp + barom + humid,data=hw3)
+x2=x1[,-1]
+cor1=cor(x2)
+kable(cor1,format='markdown')
+sscp1=scaledsscp(x1)
+kable(sscp1,format='markdown')
+ec=eigenvi(sscp1)
+kable(ec) %>%
+  kable_styling(full_width = F)
+ec2=eigenvi(cor1)
+kable(ec2) %>%
+  kable_styling(full_width = F)
+```
+
+Looking at the Scaled SSCP matrix, condition indices greater than 30 (and eigen values close to 0) indicate collinarity with the intercept. There are several CIs greater than 30 (and eigenvalues close to 0), so we know collinarity with the intercept is an issue.
+
+```{r}
+pc.sscp <- prcomp(sscp1)[["rotation"]]
+pc.cor <- prcomp(cor1)[["rotation"]]
+pc.sscp[,12]
+```
+Looking at the 12 Priciple Component of the Scaled SSCP matrix, the covariates with the largest deviations from 0  are the intercept, height, weight, area, avtrel, avtrsp and the interaction term avtrel:avtrsp.
+
+```{r}
+pc.cor[,11]
+```
+
+Looking at the 11th Principle Component of the correlation matrix, the covariates with the largest deviations from 0 are height, BMI, area, avtrel , and avtrel:avtrsp (the interaction term). There appears to be collinearity among these covariates.
+
+
+# Problem 2
+
+```{r}
+rmod=lm(y~x,cox)
+regular=autoplot(rmod)
+```
+
+```{r}
+modresid=resid(rmod)
+bcox=MASS::boxcox(rmod)
+EnvStats::boxcox(rmod, optimize = TRUE)
+lambda=0.5
+cox$yt <- (cox$y^lambda)
+cmod <- lm(cox$yt ~ cox$x)
+boxcox=autoplot(cmod)
+regular
+boxcox
+```
+
+Using $\pi=.5$ since the optimal value for $\pi$ rounds to .5
+
+Comparing the diagnostic plots between the regular and transformed models, the residuals of the transformed model appear more randomly distributed and the qq plot of the transformed model appears more normal than the untransformed model.
+
+# Problem 3
+
+##  Bullet 1) One-Way ANOVA
+
+### Dash 1) 
+
+
+```{r}
+tob1=tob%>%mutate(logcot=log(cotinine))
+```
+
+```{r}
+a=aov(logcot~task,data=tob1)
+anova1=anova(a)
+kable(anova1,format="markdown")
+```
+
+$H_0:$ all $\beta$s are equal
+ 
+$H_A:$ least one of the $\beta_i$s is not equal to the others
+
+From the anova table, the  F-statistic is 116.2 on
+3 $df_{mod}$ and 690 $df_{Error}$
+ $pvalue<.00001$
+Thus at the $\alpha=.05$ level, reject $H_0$
+There is sufficient evidence to suggest that at least one of the tasks has a different log cotinine level than the
+others, thus not all cell means are equal.
+
+### Dash 2)
+
+```{r}
+pairwise=pairw.anova(tob1$logcot,tob1$task,method="scheffe")
+pairsum=summary(glht(a, linfct = mcp(task = "Tukey")))
+tvals=pairsum[["test"]][["tstat"]]
+fvals=tvals^2
+fvals=as.data.frame(fvals)$fvals
+sch=pairwise[4]$summary
+schtab=cbind(sch,fvals)
+kable(schtab,format="markdown")
+```
+
+### Dash 3)
+
+```{r}
+modc=lm(logcot~task-1,data=tob1)
+cm=summary(modc)[4]
+kable(cm,format="markdown")
+```
+
+For cell mean coding, the parameter estimates are the cell means for each group
+
+$H_0: \mu_1=(1/3)(\mu_2+\mu_3+\mu_4)$
+
+which is the same as:
+
+$H_0: \mu_1-(1/3)\mu_2-(1/3)\mu_3-(1/3)\mu_4=0$
+
+$C=\begin{bmatrix}1& -1/3 &-1/3& -1/3\end{bmatrix}$
+
+$\theta_0=0$
+
+For reference cell coding:
+
+```{r}
+mod=lm(logcot~task,data=tob1)
+est=summary(mod)$coef
+kable(est,format="markdown")
+```
+
+$C=\begin{bmatrix} 0&1&-1/3&-1/3 \end{bmatrix}$
+
+$\theta_0=0$
+
+task 1 is the reference group, the parameter estimates are the difference between levels in each group and the reference, which is the intercept. $\beta_i$ is the difference between mean log cotinine levels of task i and task 1, for i =2, 3, 4 and $\beta_1$ is the mean log cotinine level among task 1.
+
+## Bullet 2) Two-Way ANOVA
+
+```{r,echo=F}
+tob2 = tob1 %>% mutate(
+w0t1 = case_when(wet == 0 & task == 1 ~ 1,
+wet != 0 | task != 1 ~ 0),
+w1t1 = case_when(wet == 1 & task == 1 ~ 1,
+wet != 1 | task != 1 ~ 0),
+w0t2 = case_when(wet == 0 & task == 2 ~ 1,
+wet != 0 | task != 2 ~ 0),
+w1t2 = case_when(wet == 1 & task == 2 ~ 1,
+wet != 1 | task != 2 ~ 0),
+w0t3 = case_when(wet == 0 & task == 3 ~ 1,
+wet != 0 | task != 3 ~ 0),
+w1t3 = case_when(wet == 1 & task == 3 ~ 1,
+wet != 1 | task != 3 ~ 0),
+w0t4 = case_when(wet == 0 & task == 4 ~ 1,
+wet != 0 | task != 4 ~ 0),
+w1t4 = case_when(wet == 1 & task == 4 ~ 1,
+wet != 1 | task != 4 ~ 0))
+```
+
+Two-way ANOVA model with Cell Mean coding:
+
+$y=\beta_1I_{W0,T1}+\beta_2I_{W1,T1}+\beta_3I_{W0,T2}+\beta_4I_{W1,T2}+\beta_5I_{W0,T3}+\beta_6I_{W1,T3}+\beta_7I_{W0,T4}+\beta_8I_{W1,T4}$
+
+y= logcot 
+$I_{Ti,Wj}$ is the indicator function corresponding to the $i_{th}$ task and $j_{th}$ wet
+
+```{r}
+mod2= lm(logcot ~ -1 + w0t1 + w1t1 + w0t2 + w1t2 + w0t3 + w1t3 + w0t4 + w1t4, data = tob2)
+fullmod=summary(mod2)$coefficients
+Parameter=c('B1','B2','B3','B4','B5','B6','B7','B8')
+res=cbind(fullmod,Parameter)
+kable(res,format="markdown")
+```
+
+Each parameter represents the mean logcot level for the combination of wet and task levels
+
+This is unbalanced since every cell does not have the same number of observational units.
+
+```{r}
+qqnorm(mod2$residuals)
+leveneTest(logcot ~ task*wet, data = tob2, center=median)
+```
+
+The independence assumption is based on the design and sampling scheme and does not appear to have been violated.
+
+From the qq plot, we can see that the gaussian errors assumption is met.
+
+The Levene Test returns a p-value very close to 0, thus reject the null hypothesis of equal variances, and conclude that there is a difference between the variances in the population. Thus the homogeniety of variances assumption is not met. We should be careful using this model as a result.
+
+
+## Bullet 3) The Full Model in Every Cell
+
+### Dash 1)
+
+```{r,echo=F}
+tob3 <- tob1 %>% mutate(
+t1 = case_when(task == 1 ~ 1, task != 1 ~ 0),
+t2 = case_when(task == 2 ~ 1, task != 2 ~ 0),
+t3 = case_when(task == 3 ~ 1, task != 3 ~ 0),
+t4 = case_when(task == 4 ~ 1, task != 4 ~ 0))
+```
+
+$y=\beta_1+\beta_2I_{T2}+\beta_3I_{T3}+\beta_4I_{T4}+\beta_5x+\beta_6I_{T2}x+\beta_7I_{T3}x+\beta_8I_{T4}x$
+
+y=logcot x=lnnsmoke $I_{Ti}$ is the indicator function corresponding to the $i_th$ task 
+
+
+```{r}
+mod3 = lm(logcot ~task + task*lnnsmoke, data = tob3)
+ecell=summary(mod3)$coefficients
+kable(ecell,format="markdown")
+```
+
+The intercept $\beta_1$ estimate is mean of logcot for priming  when lnnsmoke=0
+
+The task2 estimate for $\beta_2$  is the difference between the mean of logcot for barning and for priming when lnnsmoke is 0. 
+
+The task3 estimate for $\beta_3$ is the difference between the mean logcot for topping and for priming when lnnsmoke is 0 
+
+The task4 estimate for $\beta_4$ is
+the difference between the mean of logcot  for other task and for priming when lnnsmoke is 0
+The lnnsmoke estimate for $\beta_5$ is the
+mean increase in logcot when lnnsmoke increases by 1 for subjects in priming
+
+the last 3 estimates are for $\beta_6,\beta_7,\beta_8$  mean increase in logcot when lnnsmoke increases by 1 for subjects in
+barning, topping, and other.
+
+### Dash 2)
+
+```{r,echo=F}
+x = tob3 %>% mutate(int = 1, lt2 = lnnsmoke*t2, lt3 = lnnsmoke*t3, lt4 = lnnsmoke*t4)%>% dplyr::select(int, t2, t3, t4, lnnsmoke, lt2, lt3, lt4) %>% as.matrix()
+```
+
+Testing whether task is related to logcot level
+
+We want to test whether the intercepts for each task and the slopes for each task are equal to each other
+
+$H_0: \beta_2=0, \beta_3=0, \beta_4=0, \beta_6=0, \beta_7=0, \beta_8=0$
+
+Using overall F test
+
+```{r}
+C = matrix(c(
+0, 0, 0, 0, 0, 0,
+1, 0, 0, 0, 0, 0,
+0, 1, 0, 0, 0, 0,
+0, 0, 1, 0, 0, 0,
+0, 0, 0, 0, 0, 0,
+0, 0, 0, 1, 0, 0,
+0, 0, 0, 0, 1, 0,
+0, 0, 0, 0, 0, 1),
+nrow = 6)
+linearHypothesis(mod3, C)
+```
+
+Since $pvalue < .00001$ , reject $H_0$. There is sufficient evidence that the slopes for all four tasks are not equal and that the intercepts for all four tasks are not equal.
+
+Step down test: testing where all intercepts are equal
+
+```{r}
+C = matrix(
+c(0, 0, 0,
+1, 0, 0,
+0, 1, 0,
+0, 0, 1,
+0, 0, 0,
+0, 0, 0,
+0, 0, 0,
+0, 0, 0), nrow = 3)
+linearHypothesis(mod3, C)
+```
+
+Since $pvalue < .00001$ reject $H_0$
+
+There is sufficient evidence that the intercepts for all four tasks are not equal
+
+Now testing whether all slopes are equal
+
+```{r}
+C = matrix(
+c(0, 0, 0,
+0, 0, 0,
+0, 0, 0,
+0, 0, 0,
+0, 0, 0,
+1, 0, 0,
+0, 1, 0,
+0, 0, 1), nrow = 3)
+linearHypothesis(mod3, C)
+```
+
+Since $pvalue<.00001$ reject $H_0$
+
+There is sufficient evidence that the slopes for all four tasks are not equal.

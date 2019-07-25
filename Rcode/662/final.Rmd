@@ -1,0 +1,604 @@
+---
+title: "Final Exam"
+author: "Ty Darnell"
+date: "December 5, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=F, message=F)
+#options(scipen=999)
+library(tidyverse)
+library(knitr)
+library(ggfortify)
+library(modelr)
+library(data.table)
+library(magrittr)
+library(epitools)
+library(reshape2)
+library(survival)
+library(asbio)
+library(nortest)
+library(gvlma)
+```
+
+# 1)
+
+I have not recieved any assistance from anyone in completing this exam.
+
+# Problem 2
+
+```{r}
+load("~/Bios662/Final/final2018q2.RData")
+aric=as_tibble(aric)
+aric$male=factor(aric$male)
+```
+
+
+## Part a
+
+```{r}
+tab=table(aric$race_aa,aric$center)
+tbl = matrix(data=c(182,0,208,236,62,458,0,0), nrow=2, ncol=4, byrow=T)
+dimnames(tbl) = list(race_aa=c('0', '1'),center=c('F', 'J','M','W'))
+kable(tbl)
+(chi2 = chisq.test(tbl, correct=F))
+qchisq(.95, df=3)
+```
+
+$\alpha =.05$
+
+$H_0: \pi_{ij}=\pi_i \pi_j \quad i=1,2 \ j=1,2,3,4$ (independent, no association)
+
+The null hypothesis is that race and center are independent, thus no association between the two variables
+
+$H_A: \pi_{ij}\neq \pi_i \pi_j$ 
+
+The alternative hypothesis is that there is an association between race and center.
+
+Using the chi square test for independence, (chi square distribution)
+
+Under $H_0: X^2 \sim \chi^2_{(r-1)(c-1)}$
+
+r=2 c=4 so df=1*3=3
+
+Critical region: $C_{.05}=\{X^2:X^2>\chi^2_{3,.95}=7.815 \}$
+
+$X^2$= `r chi2$statistic`
+
+p-value = `r chi2$p.value`
+
+Since $X^2$ is in critical region, reject $H_0$
+
+Conclude there is an association between race and center.
+
+## Part b
+
+```{r}
+sub=aric%>%select(race_aa,center,il6)
+sub$group <- with(sub, interaction(race_aa,center))
+groupmean=sub%>%group_by(race_aa,group)%>%summarize(groupmean=mean(il6))
+kable(groupmean)
+sub$group=factor(sub$group)
+```
+
+$Y_{ij}$ is the $j^{th}$ observation in the $i^{th}$ group
+
+$i=1,2$ $j=1,2,3,4$
+
+Assume $Y_{ij} \sim N(\mu_i,\sigma^2)$
+
+Conducting a global anova F-Test to see if there is a difference in the means between the groups
+
+Assumptions:
+
+Homogeneity of variance
+
+Normality and independence of residual error
+
+Linearity
+
+$\alpha=.05$
+
+We have two levels of `race_aa` and 4 levels of `center` which gives us 8 combinations of the two variables. However we have no observations where `race_aa`=0 and `center` = J or `race_aa`=1 and `center` = M or `race_aa`=1 and `center` = W. Thus we only have 5 groups.
+
+$\mu_1$ is the mean IL-6 level of group 1 - `race_aa`=0 `center`=F
+
+$\mu_2$ is the mean of group 2- `race_aa`=0 `center`=M
+
+$\mu_3$ is the mean of group 3- `race_aa`=0 `center`=W
+
+$\mu_4$ is the mean of group 4-
+`race_aa`=1 `center`=F
+
+$\mu_5$ is the mean of group 5-
+`race_aa`=1 `center`=J
+
+
+```{r}
+av <- aov(sub$il6~sub$group)
+kable(anova(av))
+(critfval=qf(.95,4,1141))
+```
+
+$H_0: \mu_1=\mu_2=\dots=\mu_5$
+
+$H_A:$ at least one inequality
+
+Critical Value for F-statistic with degrees of freedom 4,41 =2.6
+
+$C_{.05}=\{F>F_{4,1141,.95}=2.38\}$
+
+MSR=Mean square regression
+
+MSE = Mean square error
+
+Global F test statistic: $F^*$  = MSR/MSE= 3.11
+
+$F^*>$ critical F value
+
+$3.11>2.38$
+
+Conclusion: Reject $H_0$ since p-value< .05 and test statistic is in the critical region.
+
+Conclude that at least one group has a different il6 mean.
+
+```{r}
+qq1 <- qqnorm(av$residuals); qqline(av$residuals)
+cor.test(qq1$x,qq1$y)
+lillie.test(av$residuals)
+shapiro.test(av$residuals)
+```
+
+ The QQ-plot for the residuals from the model suggests that there is departure from normality in the distribution of the residuals.
+ 
+ The result of the Lilliefors KS normality test and the Shapiro-Wilk normality test suggest a departure from normality for the residuals since both p-values are much smaller than alpha so we reject the null hypothesis that the residuals are normally distributed.
+
+
+In order to determine which means differ from each other we will conduct a pairwise scheffe Anova Test
+
+We have ${5\choose 2}$=10 null and alternative hypotheses represented by i and j each taking values of the 5 groups.
+
+Each $H_0$ is testing if the mean IL-6 levels are equal between two groups
+
+Each $H_A$ is that the mean IL-6 levels are not equal between those two groups
+
+$H_0:\mu_i=\mu_j \quad (i\neq j)$
+
+$H_A: \mu_i \neq \mu_j \quad (i\neq j)$
+
+```{r}
+pairwise=pairw.anova(sub$il6,sub$group,conf.level=.95,method="scheffe")
+```
+
+Looking at the table of result from the Scheffe test we have:
+
+```{r}
+kable(pairwise[4])
+```
+
+Conclusion:
+
+Fail to reject $H_0$ for
+
+$(\mu_1,\mu_5)$   $(\mu_1,\mu_2)$   $(\mu_1,\mu_3)$ 
+$(\mu_2,\mu_5)$
+$(\mu_2,\mu_4)$
+$(\mu_2,\mu_3)$
+$(\mu_3,\mu_5)$
+$(\mu_4,\mu_5)$
+
+based on the p-values provided in the table which are all $>\alpha$
+
+This means that there is not a statistically signifcant difference between the means of il6 level for each of these pairwise comparisons
+
+Reject $H_0$ for
+
+$(\mu_1,\mu_4)$ $(\mu_3,\mu_4)$  
+
+based on the p-values provided in the table which are all $<\alpha$
+
+This means that there is a difference between the means of the il6 levels of these pairwise comparisons.
+
+
+## Part c
+
+Linear regression model
+
+Assumptions:
+
+1) Linearity: $Y_i = \alpha + \beta X_i + \epsilon_i$
+
+2) Xs are fixed constants
+
+3) $\epsilon_i$ iid $N(0,\sigma^2)$ (homogeneity of variance)
+ 
+
+Y=ln(IL6)
+
+X= BMI
+
+$ln(IL6)=-.20337 + .0365 BMI$
+
+
+```{r}
+mod1=lm(log(il6)~bmi,aric)
+grid=aric%>%data_grid(bmi)%>%add_predictions(mod1)
+ggplot(aric,aes(bmi))+geom_point(aes(y=log(il6)))+geom_line(aes(y=pred),data=grid,color="red",size=1)
+```
+
+
+```{r}
+modpluserror=mod1$coefficients[[1]]+mod1$coefficients[[2]]*aric$bmi+mod1$residuals
+a=tibble(modpluserror,log(aric$il6))
+a
+```
+
+Based on the tibble, $Y=\alpha+\beta X+\epsilon$
+
+Thus assumption 1 is satisfied
+
+```{r}
+summary(mod1)
+autoplot(mod1)
+```
+
+Looking at the residuals plotted against the fitted values we can see that there is no pattern. Looking at the Normal Q-Q plot of the standardized residuals plotted against the theoretical quantiles we can see that they are approximately normally distributed. Based on this, assumption 3 holds.
+
+## Part d
+
+Each one unit increase in `bmi` multiplies the expected value of `il6` by $e^{\beta}$ which is $e^{.0365}=1.037174$
+
+
+
+## Part e
+
+```{r}
+female=aric%>%filter(male==0)
+males=aric%>%filter(male==1)
+
+modmale=lm(log(il6)~bmi,males)
+modfemale=lm(log(il6)~bmi,female)
+summary(modmale)
+
+summary(modfemale)
+
+ggplot(aric,aes(x=bmi,y=log(il6)))+geom_point()+geom_smooth(aes(color=male),method="lm",se=F)+facet_wrap(~male)
+```
+
+Want to test if the correlation (a measure of linear association) between Bmi and il6 is different between males and females.
+
+```{r}
+(r1=cor(female$bmi,female$il6))
+(r2=cor(males$bmi,males$il6))
+
+zp=function(r){
+  z=.5*log((1+r)/(1-r))
+  return(z)
+}
+
+(z1=zp(r1))
+
+(z2=zp(r2))
+
+n1=724
+
+n2=422
+
+zs=function(z1,z2,n1,n2){
+  z=(z1-z2)/(sqrt((1/(n1-3))+(1/(n2-3))))
+  return(z)
+}
+
+(zscore=zs(z1,z2,n1,n2))
+
+```
+
+$\alpha=.05$
+
+$\rho_1$ = correlation for females
+
+$\rho_2$=correlation for males
+
+$H_0:\rho_1=\rho_2$ (no difference in correlation)
+
+$H_A:\rho_1\neq\rho_2$ (difference in correlation)
+
+r is the sample Pearson product moment correlation
+coefficient (used to estimate $\rho$)
+
+$r_1=.2431975$
+
+$r_2=.04243223$
+
+$z_1=\dfrac{1}{2}\log\left(\dfrac{1+r_1}{1-r_1}\right)=0.2481698$
+
+$z_2=\dfrac{1}{2}\log\left(\dfrac{1+r_2}{1-r_2}\right)=0.04245772$
+
+$n_1$=sample size females= 724
+
+$n_2$=sample size males =422
+
+$z=\dfrac{z_1-z_2}{\sqrt{(1/n_1-3)+(1/n_2-3)}}=3.348745$
+
+under $H_0: z \sim N(0,1)$
+
+Critical region =$C_{.05}=\{z:z>1.645\}$
+
+$3.348745>1.645$
+
+Conclusion:
+
+Reject $H_0$ since test statistic is in the critical region. Conclude correlation (association) between bmi and il6 does vary by sex.
+
+## Part f
+
+$ln(il6)=-.453837+.033434bmi+-.065288male+.010288age+0.004hdl$
+
+
+
+```{r}
+modf=lm(log(il6)~bmi+male+age+hdl_c,aric)
+summary(modf)
+summary(mod1)
+```
+
+In the new model, the $\beta$ associated with bmi is the change in the expected value of ln(il6) when
+bmi variable increases by one unit, with all the other X
+variables being held constant.
+
+
+ coeficient of bmi from part c=0.035650 
+ new coeficient of bmi=0.033434
+ 
+ the coefiecent of bmi decreased by .002216 in the new model. This does not appear to be a substantial change.
+ 
+ ## Part g
+ 
+ The multiple $r^2$ from the model from part f is the proportion of variation explained by the model
+ 
+ $r^2=0.1073$
+ 
+ which means that 10.73% of the variation is explained by the model.
+ 
+## Part h
+
+```{r}
+autoplot(modf)
+```
+
+
+ There is no obvious pattern in the residuals plotted against the fitted values.
+
+```{r}
+lillie.test(modf$residuals)
+qqnorm(modf$residuals,xlab="Fitted Values",ylab="Residuals"); qqline(modf$residuals)
+```
+
+ the qqplot for the residuals suggests that there is departure from normality in the tails of the distribution of the
+residuals.
+
+Looking at the Lilliefor KS normality test, the p-value is much smaller than alpha so we reject the null hypothesis that the residuals are normally distributed, thus suggesting a departure from normality in the residuals and violating the assumption.
+ 
+```{r}
+df = data.frame(
+  male='0',
+  bmi=26,
+  age=80,
+  hdl_c=50)
+ kable(predict(modf,df,interval="prediction"))
+```
+ The point estimate for ln(il6) is 1.042603 which means the point estimate for il6 = exp(1.0426)=2.836583
+ 
+ The 95% prediction interval is exp(-.2492588),exp(2.334465)
+ 
+ which is (0.7793782, 10.3239351)
+ 
+This can be interpreted as  there being a 95% probability that a future observation will be contained within the prediction interval.
+
+I am not very confident in the prediction since an interaction effect was not taken into account in the model when there where potential confounders. Also looking at the qqplot the error terms of the model do not quite appear normally distributed which is a violation of the assumptions.
+
+## Part i
+
+Median of il6=2.24
+
+Median ranks= 573,574
+
+```{r}
+med=aric%>%arrange(il6)%>%mutate(rank=c(1:length(il6)))
+med=med%>%mutate(c=diabcase/timediab)
+med1=med%>%filter(rank<=573)
+med2=med%>%filter(rank>573)
+incidence1=med1%>%summarize(incidence=sum(c)*sum(diabcase)/573)
+incidence2=med2%>%summarize(incidence=sum(c)*sum(diabcase)/573)
+```
+
+Incidence of diabetes for lower half of data= `r incidence1`
+
+Incidence of diabetes for upper half of data= `r incidence2`
+
+## Part j
+
+```{r}
+med <- med %>% mutate(abovemed=cut(rank, breaks=c(0,573, Inf), labels=c('0','1')))
+med=med%>%mutate(agegroup=cut(age,breaks=c(44,49,54,60,65),labels=c('45-49','50-54','55-59','60-64')))
+```
+
+
+```{r}
+ tabstd=med%>%group_by(abovemed,agegroup)%>%summarize(cases=sum(diabcase),N=length(diabcase))
+tabstd$w=tabstd$agegroup
+ levels(tabstd$w)=c(6,5,4,4)
+ tabstd$w=as.numeric(as.character(tabstd$w))
+ tabstd=tabstd%>%mutate(p=cases/N)
+ kable(tabstd)
+```
+
+
+```{r}
+std1=tabstd%>%filter(abovemed==0)%>%mutate(pw=p*w)
+std2=tabstd%>%filter(abovemed==1)%>%mutate(pw=p*w)
+stdinc1=std1%>%summarize(std=sum(pw)/19)
+stdinc2=std2%>%summarize(std=sum(pw)/19)
+std1=std1 %>% mutate(varp1 = p*(1-p)/N)
+std2=std2%>%mutate(varp2 = p*(1-p)/N)
+adjdiff=stdinc1$std-stdinc2$std
+varp1=std1$varp1
+varp2=std2$varp2
+weights=std1$w
+varadjdiff=sum(weights^2*(varp1+varp2))/sum(weights)^2
+```
+
+Standardized incidence below the median= `r stdinc1$std `
+
+Standardized incidence above the median= `r stdinc2$std `
+
+Adjusted Difference = `r adjdiff`
+
+Variance of Adjusted Difference = `r varadjdiff`$\approx .0009$
+
+
+
+We want to test whether the incidence of diabetes differs between those with il6 below the median vs above the median. Using a Z-test to determine if the two rates are significantly different.
+
+$\alpha=.05$
+
+$H_0:\pi_{1_{adj}}=\pi_{2_{adj}}$
+
+$H_A:\pi_{1_{adj}}\neq\pi_{2_{adj}}$
+
+Critical Region: $C_{.05}=\{|Z|>1.96 \}
+
+$Z=\dfrac{\text{adjdiff}}{\sqrt{\text{varadjdiff}}}=\dfrac{ -0.1631028}{\sqrt{.0009}}=-5.43676$
+
+-5.436<-1.96
+
+Thus Z is in the critical region so reject $H_0$ and conclude that the incidence of diabetes is significantly higher above the median of il6
+
+## Part k
+
+We are assuming survivial time $T^*$ is greater than 0
+
+Data is right censored so using kaplan meier estimator
+
+Assuming independent censoring
+
+```{r}
+sur=aric%>%arrange(timedeath)
+fit <- survfit(Surv(timedeath, dead)~diabcase,data=sur)
+autoplot(fit,xlab="t",ylab="S(t)",main = "Kaplan-Meier Curves by Diabetes Case Status")
+
+```
+
+
+## Part l
+
+```{r}
+summary(fit, times=3650)
+```
+
+At t=3650 days since visit 4:
+
+diabcase=0 (not a diabetes case)
+
+survival proportion estimate=.92
+
+95% CI: (.896,.945)
+
+diabcase=1 (diabetes case)
+
+survival proportion estimate = .837
+
+95% CI: (.805,.871)
+
+## Part m
+
+Because there is right censoring an appropriate nonparematric test is the log rank test.
+
+We will use a log rank test to compare the survival functions for the group with diabetes to the group without.
+
+$S_1(t)$ = survival function of group with diabetes
+
+$S_2(t)$ = survival function of group without diabetes
+
+$H_0: S_1(t)=S_2(t)$ for all t
+
+$H_A: S_1(t)\neq S_2(t)$ for at least one t
+
+Under $H_0: X=(O_1-E_1)^2/V_1\sim \chi_1^2$
+
+Critical Region: $C_{.05}=\{X:X>\chi^2_{1,.095}=3.84 \}$
+
+$X=(O_1-E_1)^2/V_1=19.8$
+
+X is in the critical region.
+
+```{r}
+survdiff(Surv(timedeath, dead)~diabcase,data=sur)
+```
+
+$p-value \approx .000009<\alpha$
+
+Conclusion:
+
+Reject $H_0$ since X is in the critical region and p-value< $\alpha$, thus $S_1(t)\neq S_2(t)$ for at least one t
+
+Thus conclude that not having diabetes tends to increase survival time.
+
+## Part n
+
+
+Let $X_1$ be an indicator of being in the diabetes group, X=1 if in group X=0 if not
+
+The proportional hazards model adjusting for age,sex and il6 is:
+
+$\lambda(t)=\lambda_0(t)+\exp(\beta_1 X_1+\beta_2 X_2+\beta_3 X_3+\beta_4 X_4)$
+
+where $X_2$=age $X_3$=sex $X_4$=il6
+
+$\lambda(t)$ is the expected hazard at time t
+
+$\lambda_0$ is the baseline hazard and represents the hazard when all of the predictors are equal to 0.
+
+$e^{\beta}$ is the hazard ratio comparing the group with diabetes to the group without diabetes
+
+Assume:
+
+1) Hazards ratio is independent of time
+
+2) The hazard curves for the two groups are proportional and do not cross
+
+$\alpha=.05$
+
+$\beta$ is the coeficient for diabcase
+
+Want to test :
+
+$H_0:\beta=0$
+
+$H_A:\beta \neq 0$
+
+p-value for $\beta$=0.000458
+
+since p-value <$\alpha$
+
+reject $H_0$ and we conclude that survival differs significantly between the two groups, with the group without diabetes having a significantly beter survival.
+
+Estimate for harzard ratio for group with diabetes relative to group without= 1.458833
+
+This means that the diabetes group has an increased the risk of death relative to the group with out diabetes of 45.9%
+
+```{r}
+coxph(Surv(timedeath, dead)~ diabcase+age+male+il6,sur)
+```
+
+## Part o
+
+```{r,echo=F}
+include_graphics('surveysascode.PNG')
+include_graphics('sascodesurvey.PNG')
+```
+
+Estimate for mean il6 level= 3.038144
+
+95% CI for mean (2.89193,3.18435)
