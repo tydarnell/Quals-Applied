@@ -1,0 +1,53 @@
+---
+title: "2019appliedexam"
+author: "Ty Darnell"
+date: "7/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,echo=F)
+```
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(data.table)
+library(matlib)
+```
+
+
+```{r}
+df=tibble("year"=c("2017","2018","2019"),"newcases"=c(5,5,5),"popatrisk"=c(100,95,90))
+df=df%>%mutate(rate=newcases/popatrisk,rate100=100*rate)
+df
+```
+
+```{r}
+df2=df%>%mutate(lower=(sqrt(rate)-1)^2,upper=(sqrt(rate)+1)^2)
+df2
+```
+
+answer
+
+```{r}
+df3=df%>%mutate(se=sqrt(100^2*rate*(1-rate)/popatrisk),lower=rate100-1.96*se,upper=rate100+1.96*se)
+df3
+```
+
+## b direct standardization
+ 
+```{r}
+df4=df%>%rename(n=newcases,N=popatrisk,p=rate)
+df4=df4%>%mutate(w=N/sum(N),p1=p*w)
+df4=df4%>%select(-rate100)
+df4
+```
+
+```{r}
+p=sum(df4$p*df4$w)*100
+p
+p1=100*(5/100+5/95+5/90)/3
+p1
+```
+

@@ -1,0 +1,165 @@
+---
+title: "Matrix Math in R"
+author: "Linran Zhou"
+date: "July 25, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+```
+
+```{r}
+
+cat("byrow=FALSE (Default - matrix is filled by columns; otherwise, the matrix is filled by rows)\n\n")
+
+A=matrix(c(6,15,12,16,9,7,3,2,4),nrow=3,ncol=3,byrow=FALSE)
+
+B=matrix(c(12,4,10,11,15,9,1,3,5),nrow=3,ncol=3,byrow=TRUE)
+
+cat("\nLook at how matrix A is printed\n\n")
+A
+
+
+cat("\nLook at how matrix B is printed\n\n")
+B
+
+```
+```{r}
+cat("Matrix multiplication \n\n")
+
+A%*%B
+
+cat("\n Element-wise multiplication \n\n")
+
+A*B
+
+cat("\nRespectively, A'B and A'A \n\n")
+
+crossprod(A,B)
+
+cat("\n")
+
+crossprod(A)
+
+```
+
+
+
+```{r}
+
+cat("t(A) gives the transpose of the matrix\n\n")
+
+t(A) 
+
+cat("\nsolve(A) gives the inverse of A, where A is a square matrix\n\n")
+
+solve(A) 
+
+cat("\nginv(A) gives the Moore-Penrose Generalized Inverse of A, which requires loading the MASS package\n\n")
+
+ginv(A) 
+
+```
+
+```{r}
+
+cat("diag(x) creates a diagonal matrix with elements of x in the principal diagonal\n\n")
+
+x<-c(1,2,3,4,5)
+
+x
+
+diag(x)
+
+cat("\ndiag(A) returns a vector containing the elements of the principal diagonal\n\n")
+
+diag(A)
+
+cat("\n diag(k). If k is a scalar, this creates a k x k identity matrix.\n\n")
+
+diag(5)
+
+
+```
+
+
+```{r}
+cat("eigen(A) gives eigenvalues and eigenvectors.\n\n")
+eigen(A)
+
+eigen(A)$values
+
+cat("\n $vectors produces a square matrix whose columns contain the eigenvectors, and the vectors are normalized to unit length.")
+
+eigen(A)$vectors
+
+```
+
+
+```{r}
+cat("solve(A,b) returns vector x in the equation b=Ax (i.e.: A^-1b)\n\n")
+
+solve(A,B)
+
+
+```
+
+```{r}
+cat("svd(A) gives the single value decomposition of A. Don't bother with this.\n\n")
+
+svd(A)
+
+
+```
+
+
+```{r}
+C<-c(1,2,3,4,5)
+
+D<-c(5,2,3,9,2)
+
+cat("cbind(C,D) combines matrices or vectors horizontally and returns a matrix\n\n")
+
+cbind(A,B)
+
+cbind(C,D)
+
+cat("rbind(C,D) combines matrices or vectors vertically and returns a matrix\n\n")
+
+rbind(A,B)
+
+rbind(C,D)
+
+```
+
+
+```{r}
+cat("rowMeans(A), rowSums(A), colMeans(A), colSums(A) returns a vector of the respective row/column sums/means\n\n")
+
+rowMeans(B)
+
+rowSums(B)
+
+colMeans(B)
+
+colSums(B)
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
